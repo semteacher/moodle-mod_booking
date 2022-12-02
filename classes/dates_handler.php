@@ -933,6 +933,7 @@ class dates_handler {
             $date->startdatetime = userdate($starttime, $strftimedatetime); // 3. February 2023, 11:45.
 
             if (!empty($endtime)) {
+                $date->enddatetime = userdate($endtime, $strftimedatetime);
                 $date->enddate = userdate($endtime, $strftimedate); // 3. February 2023.
                 $date->datestring .= " - ";
                 $date->datestring .= $date->startdate != $date->enddate ?
@@ -944,4 +945,30 @@ class dates_handler {
         return $date;
     }
 
+
+    /**
+     * This function creates timessots between two timestamps depending on the duration.
+     * All the time is filled with entire slots. If the remaining time is not enough for a slot, it's skipped.
+     * The slots will be created with the prettify_datetime function and contain the localized strings.
+     *
+     * @param int $starttime unix timestamp
+     * @param int $endtime unix timestamp
+     * @param int $duration in seconds
+     * @return array
+     */
+    public static function create_slots($starttime, $endtime, $duration) {
+
+        $slots = [];
+        $slotendtime = $starttime; // This is just to jump into the while loop.
+
+        while ($slotendtime < $endtime) {
+
+            $slotstarttime = $starttime;
+            $slotendtime = strtotime("+ $duration minutes ", $starttime);
+            $starttime = $slotendtime; // new starttime previous slotendtime.
+            $slots[] = self::prettify_datetime($slotstarttime, $slotendtime);
+        }
+
+        return $slots;
+    }
 }

@@ -1,3 +1,59 @@
+## Version 7.7.5 (2022120900)
+**New features:**
+* New feature: Add setting to turn off creation of user calendar events, if wanted.
+* New feature: Better German language strings ("Buchungen" instead of "Antworten").
+* New feature: Turn messages off by entering 0.
+
+**Improvements:**
+* Improvement: Optimized and improved DB performance (added keys, indexes etc.)
+* Improvement: Use caching for booking option description.
+* Improvement: Better settings for automatic course creation category custom field.
+
+**Bugfixes:**
+* Bugfix: Fix problem with static functions
+* Bugfix: Do not trigger bookingoption_updated when a booking option is cancelled.
+* Bugfix: Fixed some errors in prettify_datetime.
+* Bugfix: Typo in {eventtype} of fieldmapping.
+* Bugfix: Correctly retrieve sessions via singleton_service of booking_option_settings.
+* Bugfix: Dates spanning over more than one day did not show second date.
+* Bugfix: Calendar events were created twice on creation of booking options.
+* Bugfix: We need to purge option settings cache after updating.
+* Bugfix: Fix a bug were options without dates showed Jan 1st, 1970.
+* Bugfix: Fixed some bugs with automatic course creation.
+* Bugfix: Fixed some behat test (issue #217).
+* Bugfix: Fixed error string in CSV import.
+* Bugfix: Fix missing userid in send notification mails task (function return_all_booking_information) - issue #218
+* Bugfix: Optionid was missing when creating new sessions in optiondates.php (multi-session manager).
+
+## Version 7.7.4 (2022120200)
+**New features:**
+* New feature: New placeholders from user profile:
+  username, firstname, lastname, department, address, city, country.
+
+**Improvements:**
+* Improvement: Fixed and renamed placeholders: {times} are now {dates},
+  introduced {teachers} for list of teachers, and fixed {teacher} and {teacherN}
+* Improvement: Introduced price areas to support subbookings in the future.
+* Improvement: several changes to optiondates handler.
+* Improvement: Add missing capability strings.
+* Improvement: Improve performance by more extensive use of caching.
+* Improvement: Better function for condition messages.
+* Improvement: Performance improvements in answers and option (user_submit_response)
+* Improvement: Reduce sql for performance. Booking_answers class has now no further
+  information about the users, apart from the id.
+* Improvement: Add resilience to booking_answers class
+* Improvement: Show titleprefix on "book other users" page.
+
+**Bugfixes:**
+* Bugfix: Fix a lot of little bug with booking rules.
+* Bugifx: Fixed a param in toggle_notify_user webservice.
+* Bugfix: Use correct message providers.
+* Bugfix: fixed call of rule->execute()
+* Bugfix: catch potential error on user deletion.
+* Bugfix: Add userid to check_if_limit function to fix caching problem with booking answers.
+* Bugfix: Small fix with user status function.
+* Bugfix: first column not unique.
+
 ## Version 7.7.3 (2022112300)
 **Improvements:**
 * Improvement: Correctly use availability conditions in optionview.php
@@ -728,7 +784,7 @@
 * CSV importer now imports optiondates (multisession) & customfields for multisessions
 * Show cancel button below booked button.
 * Modal is showing the info if a user is already booked or on the waiting list for an option.
-* When there are no multisessions defined, the {times} parameter for notification e-mails will use the
+* When there are no multisessions defined, the {dates} parameter for notification e-mails will use the
   single date defined within the booking option.
 * Added new fields to backup.
 * Show button redirecting to the booking option at upper right of the calendar modal.

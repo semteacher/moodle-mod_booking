@@ -175,6 +175,9 @@ class booking_option_settings {
     /** @var array $sessions */
     public $sessions = [];
 
+    /** @var array $sessioncustomfields */
+    public $sessioncustomfields = [];
+
     /** @var array $teachers */
     public $teachers = [];
 
@@ -416,9 +419,17 @@ class booking_option_settings {
                 $this->sessions = $dbrecord->sessions;
             }
 
+            // If the key "sessioncustomfields" is not yet set, we need to load from DB.
+            if (!isset($dbrecord->sessioncustomfields)) {
+                $this->load_sessioncustomfields_from_db($optionid);
+                $dbrecord->sessioncustomfields = $this->sessioncustomfields;
+            } else {
+                $this->sessioncustomfields = $dbrecord->sessioncustomfields;
+            }
+
             // If the key "teachers" is not yet set, we need to load from DB.
             if (!isset($dbrecord->teachers)) {
-                $this->load_teachers_from_db($optionid);
+                $this->load_teachers_from_db();
                 $dbrecord->teachers = $this->teachers;
             } else {
                 $this->teachers = $dbrecord->teachers;
@@ -477,20 +488,56 @@ class booking_option_settings {
     }
 
     /**
-     * Function to load teachers from DB.
+     * Function to load multi-sessions customfields from DB.
      *
      * @param int $optionid
      */
-    private function load_teachers_from_db(int $optionid) {
+    private function load_sessioncustomfields_from_db(int $optionid) {
+        global $DB;
+        // Multi-sessions.
+        if (!$this->sessioncustomfields = $DB->get_records('booking_customfields', ['optionid' => $optionid])) {
+            $this->sessioncustomfields = [];
+        }
+    }
+
+    /**
+     * Function to load teachers from DB.
+     */
+    private function load_teachers_from_db() {
         global $DB;
 
         $teachers = $DB->get_records_sql(
             'SELECT DISTINCT t.userid, u.firstname, u.lastname, u.email, u.institution
                     FROM {booking_teachers} t
                LEFT JOIN {user} u ON t.userid = u.id
-                   WHERE t.optionid = :optionid', array('optionid' => $optionid));
+                   WHERE t.optionid = :optionid', array('optionid' => $this->id));
 
         $this->teachers = $teachers;
+    }
+
+    /**
+     * Function to render a list of teachers.
+     *
+     * @param int $optionid
+     */
+    public function render_list_of_teachers() {
+        global $PAGE;
+
+        $output = $PAGE->get_renderer('mod_booking');
+        $renderedlistofteachers = '';
+
+        if (empty($this->teachers)) {
+            $this->load_teachers_from_db();
+        }
+
+        $data = array();
+        foreach ($this->teachers as $teacher) {
+            $data['teachers'][] = "$teacher->firstname $teacher->lastname";
+        }
+
+        $renderedlistofteachers = $output->render_bookingoption_description_teachers($data);
+
+        return $renderedlistofteachers;
     }
 
     /**

@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 namespace mod_booking;
 
+use Exception;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
@@ -55,7 +56,9 @@ class calendar {
         $this->type = $type;
         $this->optiondateid = $optiondateid;
 
+        // It's ok because we use singelton service in the constructor.
         $bookingoption = new \mod_booking\booking_option($this->cmid, $this->optionid);
+
         $newcalendarid = 0;
 
         switch ($this->type) {
@@ -109,6 +112,7 @@ class calendar {
             case $this::TYPEOPTIONDATE:
                 if ($justbooked) {
                     // A user has just booked an option with sessions. The events will be created as USER events.
+
                     if ($optiondate = $DB->get_record("booking_optiondates", ["id" => $this->optiondateid])) {
                         $newcalendarid = $this->booking_optiondate_add_to_cal($bookingoption->booking->settings,
                             $bookingoption->option, $optiondate, $userid, $bookingoption->option->calendarid);
@@ -204,14 +208,16 @@ class calendar {
      * @throws dml_exception
      */
     private function booking_option_add_to_cal($booking, $option, $userid = 0, $calendareventid, $addtocalendar = 1) {
-        global $DB, $CFG;
+        global $DB;
 
         if ($option->courseendtime == 0 || $option->coursestarttime == 0) {
             return 0;
         }
 
+        $optionsettings = singleton_service::get_instance_of_booking_option_settings($option->id);
+
         // Do not add booking option to calendar, if there are multiple sessions.
-        if (!empty($DB->get_records('booking_optiondates', ['optionid' => $option->id]))) {
+        if (count($optionsettings->sessions) > 1) {
             return 0;
         }
 
@@ -400,11 +406,14 @@ class calendar {
             'optionid' => $optionid,
             'userid' => $userid
         ];
+        try {
+             // At first delete events themselves.
+            $DB->delete_records_select("event", "id IN ( $sqlusereventids )", $params);
 
-        // At first delete events themselves.
-        $DB->delete_records_select("event", "id IN ( $sqlusereventids )", $params);
-
-        // Now we can delete the booking user event entries.
-        $DB->delete_records_select("booking_userevents", $optioniduserid, $params);
+            // Now we can delete the booking user event entries.
+            $DB->delete_records_select("booking_userevents", $optioniduserid, $params);
+        } catch (Exception $e) {
+            debugging('there seems to be a problem with deleting the user events.', DEBUG_NORMAL);
+        }
     }
 }

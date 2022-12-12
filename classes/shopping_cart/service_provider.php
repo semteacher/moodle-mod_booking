@@ -75,7 +75,7 @@ class service_provider implements \local_shopping_cart\local\callback\service_pr
         $user = price::return_user_to_buy_for($userid);
 
         // In booking, we always buy a booking option. Therefore, we have to first find out its price.
-        if (!$price = price::get_price($optionid, $user)) {
+        if (!$price = price::get_price('option', $optionid, $user)) {
             throw new moodle_exception('invalidpricecategoryforuser', 'mod_booking', '', '', "Price was empty.
                 This was most probably due to invalid price cateogry configuration for the given user $user->id");
         }
@@ -95,7 +95,7 @@ class service_provider implements \local_shopping_cart\local\callback\service_pr
         }
 
         $output = $PAGE->get_renderer('mod_booking');
-        $data = new bookingoption_description($booking, $optionid, null, DESCRIPTION_WEBSITE, false, null, $user);
+        $data = new bookingoption_description($optionid, null, DESCRIPTION_WEBSITE, false, null, $user);
 
         $description = $output->render_bookingoption_description_cartitem($data);
 
@@ -104,10 +104,11 @@ class service_provider implements \local_shopping_cart\local\callback\service_pr
             $optiontitle = $bookingoption->option->titleprefix . ' - ' . $optiontitle;
         }
 
-        $now = time();
+        // The date from which to calculate cancel-date is coursestarttime.
+        $coursestarttime = $settings->coursestarttime;
 
         $allowupdatedays = $booking->settings->allowupdatedays;
-        if (!empty($allowupdatedays)) {
+        if (!empty($allowupdatedays) && !empty($coursestarttime)) {
             // Different string depending on plus or minus.
             if ($allowupdatedays >= 0) {
                 $datestring = " - $allowupdatedays days";
@@ -115,7 +116,7 @@ class service_provider implements \local_shopping_cart\local\callback\service_pr
                 $allowupdatedays = abs($allowupdatedays);
                 $datestring = " + $allowupdatedays days";
             }
-            $canceluntil = strtotime($datestring, $now);
+            $canceluntil = strtotime($datestring, $coursestarttime);
         } else {
             $canceluntil = null;
         }

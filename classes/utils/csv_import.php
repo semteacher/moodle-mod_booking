@@ -22,7 +22,7 @@ use mod_booking\booking_option;
 use html_writer;
 use local_entities\entitiesrelation_handler;
 use mod_booking\customfield\booking_handler;
-use mod_booking\optiondates_handler;
+use mod_booking\dates_handler;
 use mod_booking\price;
 use mod_booking\singleton_service;
 
@@ -247,10 +247,10 @@ class csv_import {
 
                 // Now only run throught prices if there is a 'default' column.
                 if (isset($csvrecord['default'])) {
-                    $price = new price($optionid);
+                    $price = new price('option', $optionid);
                     foreach ($price->pricecategories as $category) {
                         if (isset($csvrecord[$category->identifier])) {
-                            $price->add_price($optionid, $category->identifier, $csvrecord[$category->identifier]);
+                            price::add_price('option', $optionid, $category->identifier, $csvrecord[$category->identifier]);
                         }
                     }
                 }
@@ -290,12 +290,12 @@ class csv_import {
                             $DB->insert_record('booking_teachers', $newteacher, true);
 
                             // When inserting a new teacher, we also need to insert the teacher for each optiondate.
-                            optiondates_handler::subscribe_teacher_to_all_optiondates($optionid, $teacher->id);
+                            dates_handler::subscribe_teacher_to_all_optiondates($optionid, $teacher->id);
                         } else {
                             $this->add_csverror(get_string('noteacherfound', 'booking', $i), $i);
                         }
                     } else {
-                        $this->add_csverror(get_string('teacher user not found', 'booking', $i), $i);
+                        $this->add_csverror(get_string('noteacherfound', 'booking', $i), $i);
                     }
                 }
 
@@ -447,7 +447,7 @@ class csv_import {
                     // TODO: get semester from csv file!!!!
                     $sql = "SELECT MAX(id) AS id FROM {booking_semesters}";
                     if ($semesterid = $DB->get_field_sql($sql)) {
-                        $msdates = optiondates_handler::get_optiondate_series($semesterid, $value);
+                        $msdates = dates_handler::get_optiondate_series($semesterid, $value);
                         $counter = 1;
                         if (isset($msdates['dates'])) {
                             foreach ($msdates['dates'] as $msdate) {
@@ -535,7 +535,7 @@ class csv_import {
             if (empty($csvrecord['dayofweektime'])) {
                 unset($csvrecord['dayofweektime']);
             } else {
-                if (!optiondates_handler::reoccurring_datestring_is_correct($csvrecord['dayofweektime'])) {
+                if (!dates_handler::reoccurring_datestring_is_correct($csvrecord['dayofweektime'])) {
                     $this->add_csverror('The Recurring date string must be in the following format: ' .
                         '"Mo 10:00 - 12:00", not like this:' . $csvrecord['dayofweektime'], $linenumber);
                     return false;
@@ -608,7 +608,7 @@ class csv_import {
                     $importinfo .= ' (' . get_string('bookingoptionname', 'mod_booking') . ')';
                     break;
                 case 'howmanyusers':
-                    $importinfo .= ' (' . get_string('howmanyusers', 'mod_booking') . ')';
+                    $importinfo .= ' (' . get_string('bookotheruserslimit', 'mod_booking') . ')';
                     break;
                 case 'enrolmentstatus':
                     $importinfo .= ' (' . get_string('enrolmentstatus', 'mod_booking') . ')';

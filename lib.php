@@ -30,7 +30,7 @@ use local_entities\entitiesrelation_handler;
 use mod_booking\booking_option;
 use mod_booking\booking_rules\rules_info;
 use mod_booking\booking_utils;
-use mod_booking\optiondates_handler;
+use mod_booking\dates_handler;
 use mod_booking\output\coursepage_available_options;
 use mod_booking\output\coursepage_shortinfo_and_button;
 use mod_booking\singleton_service;
@@ -682,13 +682,13 @@ function booking_update_options($optionvalues, $context) {
     }
 
     if (!empty($optionvalues->dayofweektime)) {
-        // Possible improvement: We could add the optiondates_handler::reoccurring_datestring_is_correct check here...
+        // Possible improvement: We could add the dates_handler::reoccurring_datestring_is_correct check here...
         // ...and only store if the string is correct, if this is needed.
         $option->dayofweektime = $optionvalues->dayofweektime;
 
         // This is only for sql filtering, but we need the weekday in an extra column.
 
-        $dayinfo = optiondates_handler::prepare_day_info($optionvalues->dayofweektime);
+        $dayinfo = dates_handler::prepare_day_info($optionvalues->dayofweektime);
         if (!empty($dayinfo['day'])) {
             $option->dayofweek = $dayinfo['day'];
         }
@@ -901,10 +901,10 @@ function booking_update_options($optionvalues, $context) {
         };
     }
 
-    // Create a new course and put it either in a new coursecategory or in an already existing.
+    /* Create a new course and put it either in a new course category
+       or in an already existing one. */
     if ($option->courseid == -1) {
-        $categoryid = 0;
-        // TODO shortnamefalback?
+        $categoryid = 1; // By default, we use the first category.
         if (!empty(get_config('booking', 'newcoursecategorycfield'))) {
             // FEATURE add more settingfields add customfield_ to settingsvalue from customfields allwo only Textfields or Selects.
             $cfforcategory = 'customfield_' . get_config('booking', 'newcoursecategorycfield');
@@ -930,15 +930,26 @@ function booking_update_options($optionvalues, $context) {
         }
 
         // Create course.
+        $fullnamewithprefix = '';
+        if (!empty($option->titleprefix)) {
+            $fullnamewithprefix .= $option->titleprefix . ' - ';
+        }
+        $fullnamewithprefix .= $option->text;
+
+        // Courses need to have unique shortnames.
         $i = 1;
-        $shortname = $option->text;
+        $shortname = $fullnamewithprefix;
         while ($DB->get_record('course', array('shortname' => $shortname))) {
-            $shortname = $option->text . '_' . $i;
+            $shortname = $fullnamewithprefix . '_' . $i;
             $i++;
         };
-        $newcourse['fullname'] = $option->text;
+        $newcourse['fullname'] = $fullnamewithprefix;
         $newcourse['shortname'] = $shortname;
         $newcourse['categoryid'] = $categoryid;
+        if (!empty($option->coursestarttime) && !empty($option->courseendtime)) {
+            $newcourse['startdate'] = $option->coursestarttime;
+            $newcourse['enddate'] = $option->courseendtime;
+        }
 
         $courses = array($newcourse);
         $createdcourses = core_course_external::create_courses($courses);
@@ -1080,7 +1091,7 @@ function booking_update_options($optionvalues, $context) {
         // Update start and end date of the option depending on the sessions.
         booking_updatestartenddate($option->id);
 
-        $optiondateshandler = new optiondates_handler($optionvalues->optionid, $optionvalues->bookingid);
+        $optiondateshandler = new dates_handler($optionvalues->optionid, $optionvalues->bookingid);
         if (!empty($optionvalues->newoptiondates) || !empty($optionvalues->stillexistingdates)) {
             // Save the optiondates.
             $optiondateshandler->save_from_form($optionvalues);
@@ -1092,9 +1103,9 @@ function booking_update_options($optionvalues, $context) {
         // Save relation for each newly created optiondate if checkbox is active.
         save_entity_relations_for_optiondates_of_option($optionvalues, $option->id);
 
-        // phpcs:ignore Squiz.PHP.CommentedOutCode.Found,moodle.Commenting.InlineComment.NotCapital
-        // $cache = \cache::make('mod_booking', 'bookingoptionsanswers');
-        // $cache->delete($option->id);
+        // We need to reset cache for options table and option settings after updating an option.
+        cache_helper::purge_by_event('setbackoptionstable');
+        cache_helper::invalidate_by_event('setbackoptionsettings', [$option->id]);
 
         rules_info::execute_rules_for_option($option->id);
 
@@ -1186,7 +1197,7 @@ function booking_update_options($optionvalues, $context) {
         // Fixed: Also create optiondates for new options!
         if (!empty($optionvalues->newoptiondates) || !empty($optionvalues->stillexistingdates) && !empty($optionid)) {
             // Save the optiondates.
-            $optiondateshandler = new optiondates_handler($optionid, $optionvalues->bookingid);
+            $optiondateshandler = new dates_handler($optionid, $optionvalues->bookingid);
             $optiondateshandler->save_from_form($optionvalues);
         }
 
@@ -1206,13 +1217,9 @@ function booking_update_options($optionvalues, $context) {
             rules_info::execute_rules_for_option($optionid);
         }
 
-        // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
-        // We also need to invalidate the cache for the booking answer.
-        // phpcs:ignore moodle.Commenting.InlineComment.InvalidEndChar,moodle.Commenting.InlineComment.NotCapital
-        // cache_helper::invalidate_by_event('setbackoptionsanswers', [$optionid]);
-        // phpcs:ignore Squiz.PHP.CommentedOutCode.Found,moodle.Commenting.InlineComment.NotCapital
-        // $cache = \cache::make('mod_booking', 'bookingoptionsanswers');
-        // $cache->delete($optionid);
+        // We need to reset cache for options table and option settings after updating an option.
+        cache_helper::purge_by_event('setbackoptionstable');
+        cache_helper::invalidate_by_event('setbackoptionsettings', [$optionid]);
 
         return $optionid;
     }
@@ -1272,7 +1279,7 @@ function deal_with_multisessions(&$optionvalues, $booking, $optionid, $context) 
             $optiondateid = $DB->insert_record('booking_optiondates', $optiondate);
 
             // Add teachers of the booking option to newly created optiondate.
-            optiondates_handler::subscribe_existing_teachers_to_new_optiondate($optiondateid);
+            dates_handler::subscribe_existing_teachers_to_new_optiondate($optiondateid);
 
             for ($j = 1; $j < 4; ++$j) {
                 $cfname = 'ms' . $i . 'cf' . $j . 'name';
@@ -1314,9 +1321,9 @@ function booking_get_user_status($userid, $optionid, $bookingid, $cmid) {
     global $DB;
     $option = $DB->get_record('booking_options', array('id' => $optionid));
     $current = $DB->get_record('booking_answers',
-        array('bookingid' => $bookingid, 'userid' => $userid, 'optionid' => $optionid));
+        array('userid' => $userid, 'optionid' => $optionid));
     $allresponses = $DB->get_records_select('booking_answers',
-        "bookingid = $bookingid AND optionid = $optionid", array(), 'timemodified', 'userid');
+        "optionid = $optionid", array(), 'timemodified', 'userid');
 
     $context = context_module::instance($cmid);
     $sortedresponses = array();
@@ -2118,7 +2125,7 @@ function booking_delete_instance($id) {
     } else {
         // If optiondates are deleted we also have to delete the associated entries in booking_optiondates_teachers.
         // TODO: this should be moved into delete_booking_option.
-        optiondates_handler::delete_booking_optiondates_teachers_by_bookingid($booking->id);
+        dates_handler::delete_booking_optiondates_teachers_by_bookingid($booking->id);
     }
 
     // Delete any entity relations for the booking instance.
@@ -2252,8 +2259,7 @@ function booking_check_statuschange($optionid, $booking, $cancelleduserid, $cmid
     if ($option->maxanswers == 0) {
         return false; // No limit on bookings => no waiting list to manage.
     }
-    $allresponses = $DB->get_records('booking_answers',
-            array('bookingid' => $booking->id, 'optionid' => $optionid), 'timemodified', 'userid');
+    $allresponses = $DB->get_records('booking_answers', array('optionid' => $optionid), 'timemodified', 'userid');
     $context = context_module::instance($cmid);
     $firstuseronwaitinglist = $option->maxanswers + 1;
     $i = 1;
@@ -2304,7 +2310,7 @@ function subscribe_teacher_to_booking_option($userid, $optionid, $cm, $groupid =
     $inserted = $DB->insert_record("booking_teachers", $sub);
 
     // When inserting a new teacher, we also need to insert the teacher for each optiondate.
-    optiondates_handler::subscribe_teacher_to_all_optiondates($optionid, $userid);
+    dates_handler::subscribe_teacher_to_all_optiondates($optionid, $userid);
 
     if (!empty($groupid)) {
         groups_add_member($groupid, $userid);
@@ -2339,7 +2345,7 @@ function unsubscribe_teacher_from_booking_option($userid, $optionid, $cm) {
     $event->trigger();
 
     // Also delete the teacher from every optiondate.
-    optiondates_handler::remove_teacher_from_all_optiondates($optionid, $userid);
+    dates_handler::remove_teacher_from_all_optiondates($optionid, $userid);
 
     return ($DB->delete_records('booking_teachers',
             array('userid' => $userid, 'optionid' => $optionid)));

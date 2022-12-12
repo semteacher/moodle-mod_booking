@@ -27,7 +27,7 @@ use mod_booking\singleton_service;
 use local_entities\entitiesrelation_handler;
 use local_entities\local\entities\entitydate;
 use mod_booking\bo_availability\bo_info;
-use mod_booking\optiondates_handler;
+use mod_booking\dates_handler;
 use moodle_url;
 use stdClass;
 
@@ -375,7 +375,7 @@ class option_form extends \moodleform {
         $mform->setType('pollurlteachers', PARAM_TEXT);
         $mform->addHelpButton('pollurlteachers', 'pollurlteachers', 'mod_booking');
 
-        $mform->addElement('text', 'howmanyusers', get_string('howmanyusers', 'mod_booking'), 0);
+        $mform->addElement('text', 'howmanyusers', get_string('bookotheruserslimit', 'mod_booking'), 0);
         $mform->addRule('howmanyusers', get_string('err_numeric', 'form'), 'numeric', null, 'client');
         $mform->setType('howmanyusers', PARAM_INT);
 
@@ -414,7 +414,7 @@ class option_form extends \moodleform {
         }
 
         // Add price.
-        $price = new price($this->_customdata['optionid']);
+        $price = new price('option', $this->_customdata['optionid']);
         $price->add_price_to_mform($mform);
 
         // Add entities.
@@ -886,7 +886,7 @@ class option_form extends \moodleform {
      * @return void
      */
     private static function order_all_dates_to_book_in_form(stdClass &$fromform) {
-        optiondates_handler::add_values_from_post_to_form($fromform);
+        dates_handler::add_values_from_post_to_form($fromform);
 
         // For the form validation, we need to pass the values to book in a special form.
         // We only need those timestamps which are new.

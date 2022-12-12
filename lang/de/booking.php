@@ -36,6 +36,8 @@ $string['showonlymyinstitutions'] = "Meine Institution";
 $string['addmorebookings'] = 'Buchungen hinzufügen';
 $string['allowupdate'] = 'Buchungen dürfen gelöscht/aktualisiert werden';
 $string['answered'] = 'Beantwortet';
+$string['dontaddpersonalevents'] = 'Keine Einträge im persönlichen Kalender erstellen.';
+$string['dontaddpersonaleventsdesc'] = 'Für jede Buchung und alle Termine werden eigene Einträge im persönlichen Kalender der TeilnehmerInnen erstellt. Für eine bessere Performance auf sehr intensiv genutzten Seiten kann diese Funktion deaktiviert werden.';
 $string['attachical'] = 'Einen iCal Kalendereintrag für die gesamte Dauer einer Buchung als Dateianhang in der E-Mail Benachrichtigung einfügen';
 $string['attachicaldesc'] = 'E-Mail Benachrichtigungen im iCal Kalenderformat hinzufügen, wenn diese Option aktiviert wird. Es wir entweder der in den Buchungsoptionen festgelegte
 Termin eingefügt oder ein Event mit dem Anfangsdatum des ersten Termins einer Terminserie und dem Enddatum des letzten Termins der Terminserie.';
@@ -47,9 +49,9 @@ $string['booking'] = 'Buchung';
 $string['bookinginstance'] = 'Buchungsinstanz';
 $string['booking:addinstance'] = 'Neue Buchungsinstanz anlegen';
 $string['booking:choose'] = 'Buchen';
-$string['booking:deleteresponses'] = 'Anworten löschen';
-$string['booking:downloadresponses'] = 'Antworten herunterladen';
-$string['booking:readresponses'] = 'Antworten lesen';
+$string['booking:deleteresponses'] = 'Buchungen löschen';
+$string['booking:downloadresponses'] = 'Buchungen herunterladen';
+$string['booking:readresponses'] = 'Buchungen ansehen';
 $string['booking:rate'] = 'Rate chosen booking options';
 $string['booking:sendpollurl'] = 'Umfragelink senden';
 $string['booking:sendpollurltoteachers'] = 'Umfragelink and Trainer:innen senden';
@@ -89,7 +91,7 @@ $string['eventreport_viewed'] = 'Report angesehen';
 $string['eventuserprofilefields_updated'] = 'Nutzerprofil aktualisiert';
 $string['existingsubscribers'] = 'Vorhandene Nutzer:innen';
 $string['expired'] = 'Diese Aktivität wurde leider am {$a} beendet und steht nicht mehr zur Verfügung';
-$string['fillinatleastoneoption'] = 'Geben Sie mindestens 2 mögliche Antworten an.';
+$string['fillinatleastoneoption'] = 'Geben Sie mindestens 2 mögliche Buchungen an.';
 $string['full'] = 'Ausgebucht';
 $string['goenrol'] = 'Gehe zu "Buchung vornehmen"';
 $string['gotop'] = 'Nach oben';
@@ -110,9 +112,9 @@ $string['pluginadministration'] = 'Booking administration';
 $string['pluginname'] = 'Booking';
 $string['potentialsubscribers'] = 'Mögliche Nutzer:innen';
 $string['proversiononly'] = 'Nur in der PRO-Version verfügbar.';
-$string['removeresponses'] = 'Alle Antworten löschen';
-$string['responses'] = 'Antworten';
-$string['responsesto'] = 'Antworten zu {$a} ';
+$string['removeresponses'] = 'Alle Buchungen löschen';
+$string['responses'] = 'Buchungen';
+$string['responsesto'] = 'Buchungen zu {$a} ';
 $string['spaceleft'] = 'Platz verfügbar';
 $string['spacesleft'] = 'Plätze verfügbar';
 $string['subscribersto'] = 'Trainer:innen für \'{$a}\'';
@@ -123,13 +125,13 @@ $string['restrictanswerperiodopening'] = 'Buchungsoption erst ab einem bestimmte
 $string['restrictanswerperiodclosing'] = 'Buchungsoption nur bis zu einem bestimmten Zeitpunkt ermöglichen';
 
 $string['to'] = 'bis';
-$string['viewallresponses'] = '{$a} Antworten verwalten';
+$string['viewallresponses'] = '{$a} Buchungen verwalten';
 $string['yourselection'] = 'Ihre Auswahl';
 
 // Subscribeusers.php.
 $string['cannotremovesubscriber'] = 'Um die Buchung zu stornieren, muss zuvor der Aktivitätsabschluss entfernt werden. Die Buchung wurde nicht storniert';
 $string['allchangessaved'] = 'Alle Änderungen wurden gespeichert.';
-$string['backtoresponses'] = '&lt;&lt; Zurück zu den Antworten';
+$string['backtoresponses'] = '&lt;&lt; Zurück zu den Buchungen';
 $string['allusersbooked'] = 'Alle {$a} Nutzer:innen wurden erfolgreich für diese Buchungsoption gebucht.';
 $string['notallbooked'] = 'Folgende Nutzer:innen konnten aufgrund nicht mehr verfügbarer Plätze oder durch das Überschreiten des vorgegebenen Buchungslimits pro Nutzer:in nicht gebucht werden: {$a}';
 
@@ -162,8 +164,7 @@ $string['btncacname'] = 'Bezeichnung des Buttons "Aktivitätsabschluss bestätig
 $string['btncancelname'] = 'Bezeichnung des Buttons "Buchung stornieren"';
 $string['description'] = 'Beschreibung';
 $string['disablebookingusers'] = 'Buchung von Teilnehmer:innen deaktivieren - "Jetzt buchen" Button unsichtbar schalten.';
-$string['howmanyusers'] = 'Maximale Anzahl an Buchungen, die ein:e der Buchungsoption zugewiesene:r Trainer:in vornehmen kann';
-$string['howmanyusers_help'] = '';
+$string['bookotheruserslimit'] = 'Max. Anzahl an Buchungen, die ein:e der Buchungsoption zugewiesene:r Trainer:in vornehmen kann';
 $string['institution'] = 'Institution';
 $string['institution_help'] = 'Sie können den Namen der Institution manuell eingeben oder aus einer Liste von
                             früheren Institutionen auswählen. Sie können nur eine Institution angeben. Sobald
@@ -335,10 +336,10 @@ $string['bookingmanagererror'] = 'Der angegebene Nutzername ist ungültig. Entwe
 $string['autoenrol'] = 'Nutzer:innen automatisch einschreiben';
 $string['autoenrol_help'] = 'Fals ausgewählt werden Nutzer:innen automatisch in den Kurs eingeschrieben sobald sie die Buchung durchgeführt haben und wieder ausgetragen, wenn die Buchung storniert wird.';
 $string['bookedtext'] = 'Buchungsbestätigung';
-$string['userleave'] = 'Nutzer/in hat Buchung storniert';
+$string['userleave'] = 'Nutzer/in hat Buchung storniert (0 eingeben zum Ausschalten)';
 $string['waitingtext'] = 'Wartelistenbestätigung';
 $string['statuschangetext'] = 'Statusänderungsbenachrichtigung';
-$string['deletedtext'] = 'Stornierungsbenachrichtigung';
+$string['deletedtext'] = 'Stornierungsbenachrichtigung (0 eingeben zum Ausschalten)';
 $string['bookingchangedtext'] = 'Benachrichtigung bei Änderungen an der Buchung (geht nur an User, die bereits gebucht haben). Verwenden Sie den Platzhalter {changes} um die Änderungen anzuzeigen. 0 eingeben um Änderungsbenachrichtigungen auszuschalten.';
 $string['comments'] = 'Kommentare';
 $string['nocomments'] = 'Kommentare deaktiviert';
@@ -372,7 +373,7 @@ $string['pollurlteachers_help'] = 'Folgende Platzhalter können im Text verwende
 <ul>
 <li>{bookingdetails} - Zusammenfassung der Buchung (inkl. Sessions und Link zur Buchungsoption)</li>
 <li>{gotobookingoption} - Link zur Buchungsoption</li>
-<li>{status}</li>
+<li>{status} - Buchungsstatus</li>
 <li>{participant}</li>
 <li>{title}</li>
 <li>{duration}</li>
@@ -386,12 +387,13 @@ $string['pollurlteachers_help'] = 'Folgende Platzhalter können im Text verwende
 <li>{institution}</li>
 <li>{address}</li>
 <li>{eventtype}</li>
-<li>{teacher}</li>
-<li>{teacherN} - N ist die Trainernummer. Zum Beispiel: {teacher1}</li>
+<li>{teacher} - Name der ersten Trainer:in</li>
+<li>{teachers} - Liste aller Trainer:innen</li>
+<li>{teacherN} - Name eines spezifischen Trainers. Z.B. {teacher1}</li>
 <li>{pollstartdate}</li>
 <li>{qr_id} - QR Code der Userid einfügen</li>
 <li>{qr_username} - QR Code des Usernamen einfügen</li>
-<li>{times} - Sessions (bei mehreren Terminen)</li>
+<li>{dates} - Sessions (bei mehreren Terminen)</li>
 <li>{shorturl} - Verkürzte URL der Buchungsoption</li>
 <li>{usercalendarurl} - Link zum Abonnieren des User-Kalenders (persönliche Ereignisse)</li>
 <li>{coursecalendarurl} - Link zum Abonnieren des Kurs-Kalenders (Kurs-Ereignisse)</li>
@@ -401,7 +403,7 @@ $string['pollurl_help'] = 'Folgende Platzhalter können im Text verwendet werden
 <ul>
 <li>{bookingdetails} - Zusammenfassung der Buchung (inkl. Sessions und Link zur Buchungsoption)</li>
 <li>{gotobookingoption} - Link zur Buchungsoption</li>
-<li>{status}</li>
+<li>{status} - Buchungsstatus</li>
 <li>{participant}</li>
 <li>{title}</li>
 <li>{duration}</li>
@@ -415,12 +417,13 @@ $string['pollurl_help'] = 'Folgende Platzhalter können im Text verwendet werden
 <li>{institution}</li>
 <li>{address}</li>
 <li>{eventtype}</li>
-<li>{teacher}</li>
-<li>{teacherN} - N ist die Trainernummer. Zum Beispiel: {teacher1}</li>
+<li>{teacher} - Name der ersten Trainer:in</li>
+<li>{teachers} - Liste aller Trainer:innen</li>
+<li>{teacherN} - Name eines spezifischen Trainers. Z.B. {teacher1}</li>
 <li>{pollstartdate}</li>
 <li>{qr_id} - QR Code der Userid einfügen</li>
 <li>{qr_username} - QR Code des Usernamen einfügen</li>
-<li>{times} - Sessions (bei mehreren Terminen)</li>
+<li>{dates} - Sessions (bei mehreren Terminen)</li>
 <li>{shorturl} - Verkürzte URL der Buchungsoption</li>
 <li>{usercalendarurl} - Link zum Abonnieren des User-Kalenders (persönliche Ereignisse)</li>
 <li>{coursecalendarurl} - Link zum Abonnieren des Kurs-Kalenders (Kurs-Ereignisse)</li>
@@ -430,7 +433,7 @@ $string['bookedtext_help'] = 'Lassen Sie dieses Feld leer, um den Standardtext d
 <ul>
 <li>{bookingdetails} - Zusammenfassung der Buchung (inkl. Sessions und Link zur Buchungsoption)</li>
 <li>{gotobookingoption} - Link zur Buchungsoption</li>
-<li>{status}</li>
+<li>{status} - Buchungsstatus</li>
 <li>{participant}</li>
 <li>{title}</li>
 <li>{duration}</li>
@@ -444,12 +447,13 @@ $string['bookedtext_help'] = 'Lassen Sie dieses Feld leer, um den Standardtext d
 <li>{institution}</li>
 <li>{address}</li>
 <li>{eventtype}</li>
-<li>{teacher}</li>
-<li>{teacherN} - N ist die Trainernummer. Zum Beispiel: {teacher1}</li>
+<li>{teacher} - Name der ersten Trainer:in</li>
+<li>{teachers} - Liste aller Trainer:innen</li>
+<li>{teacherN} - Name eines spezifischen Trainers. Z.B. {teacher1}</li>
 <li>{pollstartdate}</li>
 <li>{qr_id} - QR Code der Userid einfügen</li>
 <li>{qr_username} - QR Code des Usernamen einfügen</li>
-<li>{times} - Sessions (bei mehreren Terminen)</li>
+<li>{dates} - Sessions (bei mehreren Terminen)</li>
 <li>{shorturl} - Verkürzte URL der Buchungsoption</li>
 <li>{usercalendarurl} - Link zum Abonnieren des User-Kalenders (persönliche Ereignisse)</li>
 <li>{coursecalendarurl} - Link zum Abonnieren des Kurs-Kalenders (Kurs-Ereignisse)</li>
@@ -459,7 +463,7 @@ $string['userleave_help'] = 'Lassen Sie dieses Feld leer, um den Standardtext de
 <ul>
 <li>{bookingdetails} - Zusammenfassung der Buchung (inkl. Sessions und Link zur Buchungsoption)</li>
 <li>{gotobookingoption} - Link zur Buchungsoption</li>
-<li>{status}</li>
+<li>{status} - Buchungsstatus</li>
 <li>{participant}</li>
 <li>{title}</li>
 <li>{duration}</li>
@@ -475,12 +479,13 @@ $string['userleave_help'] = 'Lassen Sie dieses Feld leer, um den Standardtext de
 <li>{institution}</li>
 <li>{address}</li>
 <li>{eventtype}</li>
-<li>{teacher}</li>
-<li>{teacherN} - N ist die Trainernummer. Zum Beispiel: {teacher1}</li>
+<li>{teacher} - Name der ersten Trainer:in</li>
+<li>{teachers} - Liste aller Trainer:innen</li>
+<li>{teacherN} - Name eines spezifischen Trainers. Z.B. {teacher1}</li>
 <li>{pollstartdate}</li>
 <li>{qr_id} - QR Code der Userid einfügen</li>
 <li>{qr_username} - QR Code des Usernamen einfügen</li>
-<li>{times} - Sessions (bei mehreren Terminen)</li>
+<li>{dates} - Sessions (bei mehreren Terminen)</li>
 <li>{shorturl} - Verkürzte URL der Buchungsoption</li>
 <li>{usercalendarurl} - Link zum Abonnieren des User-Kalenders (persönliche Ereignisse)</li>
 <li>{coursecalendarurl} - Link zum Abonnieren des Kurs-Kalenders (Kurs-Ereignisse)</li>
@@ -490,7 +495,7 @@ $string['waitingtext_help'] = 'Lassen Sie dieses Feld leer, um den Standardtext 
 <ul>
 <li>{bookingdetails} - Zusammenfassung der Buchung (inkl. Sessions und Link zur Buchungsoption)</li>
 <li>{gotobookingoption} - Link zur Buchungsoption</li>
-<li>{status}</li>
+<li>{status} - Buchungsstatus</li>
 <li>{participant}</li>
 <li>{title}</li>
 <li>{duration}</li>
@@ -506,12 +511,13 @@ $string['waitingtext_help'] = 'Lassen Sie dieses Feld leer, um den Standardtext 
 <li>{institution}</li>
 <li>{address}</li>
 <li>{eventtype}</li>
-<li>{teacher}</li>
-<li>{teacherN} - N ist die Trainernummer. Zum Beispiel: {teacher1}</li>
+<li>{teacher} - Name der ersten Trainer:in</li>
+<li>{teachers} - Liste aller Trainer:innen</li>
+<li>{teacherN} - Name eines spezifischen Trainers. Z.B. {teacher1}</li>
 <li>{pollstartdate}</li>
 <li>{qr_id} - QR Code der Userid einfügen</li>
 <li>{qr_username} - QR Code des Usernamen einfügen</li>
-<li>{times} - Sessions (bei mehreren Terminen)</li>
+<li>{dates} - Sessions (bei mehreren Terminen)</li>
 <li>{shorturl} - Verkürzte URL der Buchungsoption</li>
 <li>{usercalendarurl} - Link zum Abonnieren des User-Kalenders (persönliche Ereignisse)</li>
 <li>{coursecalendarurl} - Link zum Abonnieren des Kurs-Kalenders (Kurs-Ereignisse)</li>
@@ -521,7 +527,7 @@ $string['notifyemail_help'] = 'Lassen Sie dieses Feld leer, um den Standardtext 
 <ul>
 <li>{bookingdetails} - Zusammenfassung der Buchung (inkl. Sessions und Link zur Buchungsoption)</li>
 <li>{gotobookingoption} - Link zur Buchungsoption</li>
-<li>{status}</li>
+<li>{status} - Buchungsstatus</li>
 <li>{participant}</li>
 <li>{title}</li>
 <li>{duration}</li>
@@ -537,12 +543,13 @@ $string['notifyemail_help'] = 'Lassen Sie dieses Feld leer, um den Standardtext 
 <li>{institution}</li>
 <li>{address}</li>
 <li>{eventtype}</li>
-<li>{teacher}</li>
-<li>{teacherN} - N ist die Trainernummer. Zum Beispiel: {teacher1}</li>
+<li>{teacher} - Name der ersten Trainer:in</li>
+<li>{teachers} - Liste aller Trainer:innen</li>
+<li>{teacherN} - Name eines spezifischen Trainers. Z.B. {teacher1}</li>
 <li>{pollstartdate}</li>
 <li>{qr_id} - QR Code der Userid einfügen</li>
 <li>{qr_username} - QR Code des Usernamen einfügen</li>
-<li>{times} - Sessions (bei mehreren Terminen)</li>
+<li>{dates} - Sessions (bei mehreren Terminen)</li>
 <li>{shorturl} - Verkürzte URL der Buchungsoption</li>
 <li>{usercalendarurl} - Link zum Abonnieren des User-Kalenders (persönliche Ereignisse)</li>
 <li>{coursecalendarurl} - Link zum Abonnieren des Kurs-Kalenders (Kurs-Ereignisse)</li>
@@ -554,7 +561,7 @@ $string['notifyemailteachers_help'] = 'Lassen Sie dieses Feld leer, um den Stand
 <li>{gotobookingoption} - Link zur Buchungsoption</li>
 <li>{numberparticipants} - Anzahl der Teilnehmer:innen (ohne Warteliste)</li>
 <li>{numberwaitinglist} - Anzahl der Teilnehmer:innen auf der Warteliste</li>
-<li>{status}</li>
+<li>{status} - Buchungsstatus</li>
 <li>{participant}</li>
 <li>{title}</li>
 <li>{duration}</li>
@@ -570,12 +577,13 @@ $string['notifyemailteachers_help'] = 'Lassen Sie dieses Feld leer, um den Stand
 <li>{institution}</li>
 <li>{address}</li>
 <li>{eventtype}</li>
-<li>{teacher}</li>
-<li>{teacherN} - N ist die Trainernummer. Zum Beispiel: {teacher1}</li>
+<li>{teacher} - Name der ersten Trainer:in</li>
+<li>{teachers} - Liste aller Trainer:innen</li>
+<li>{teacherN} - Name eines spezifischen Trainers. Z.B. {teacher1}</li>
 <li>{pollstartdate}</li>
 <li>{qr_id} - QR Code der Userid einfügen</li>
 <li>{qr_username} - QR Code des Usernamen einfügen</li>
-<li>{times} - Sessions (bei mehreren Terminen)</li>
+<li>{dates} - Sessions (bei mehreren Terminen)</li>
 <li>{shorturl} - Verkürzte URL der Buchungsoption</li>
 <li>{usercalendarurl} - Link zum Abonnieren des User-Kalenders (persönliche Ereignisse)</li>
 <li>{coursecalendarurl} - Link zum Abonnieren des Kurs-Kalenders (Kurs-Ereignisse)</li>
@@ -585,7 +593,7 @@ $string['statuschangetext_help'] = 'Lassen Sie dieses Feld leer, um den Standard
 <ul>
 <li>{bookingdetails} - Zusammenfassung der Buchung (inkl. Sessions und Link zur Buchungsoption)</li>
 <li>{gotobookingoption} - Link zur Buchungsoption</li>
-<li>{status}</li>
+<li>{status} - Buchungsstatus</li>
 <li>{participant}</li>
 <li>{title}</li>
 <li>{duration}</li>
@@ -601,12 +609,13 @@ $string['statuschangetext_help'] = 'Lassen Sie dieses Feld leer, um den Standard
 <li>{institution}</li>
 <li>{address}</li>
 <li>{eventtype}</li>
-<li>{teacher}</li>
-<li>{teacherN} - N ist die Trainernummer. Zum Beispiel: {teacher1}</li>
+<li>{teacher} - Name der ersten Trainer:in</li>
+<li>{teachers} - Liste aller Trainer:innen</li>
+<li>{teacherN} - Name eines spezifischen Trainers. Z.B. {teacher1}</li>
 <li>{pollstartdate}</li>
 <li>{qr_id} - QR Code der Userid einfügen</li>
 <li>{qr_username} - QR Code des Usernamen einfügen</li>
-<li>{times} - Sessions (bei mehreren Terminen)</li>
+<li>{dates} - Sessions (bei mehreren Terminen)</li>
 <li>{shorturl} - Verkürzte URL der Buchungsoption</li>
 <li>{usercalendarurl} - Link zum Abonnieren des User-Kalenders (persönliche Ereignisse)</li>
 <li>{coursecalendarurl} - Link zum Abonnieren des Kurs-Kalenders (Kurs-Ereignisse)</li>
@@ -616,7 +625,7 @@ $string['deletedtext_help'] = 'Lassen Sie dieses Feld leer, um den Standardtext 
 <ul>
 <li>{bookingdetails} - Zusammenfassung der Buchung (inkl. Sessions und Link zur Buchungsoption)</li>
 <li>{gotobookingoption} - Link zur Buchungsoption</li>
-<li>{status}</li>
+<li>{status} - Buchungsstatus</li>
 <li>{participant}</li>
 <li>{title}</li>
 <li>{duration}</li>
@@ -632,12 +641,13 @@ $string['deletedtext_help'] = 'Lassen Sie dieses Feld leer, um den Standardtext 
 <li>{institution}</li>
 <li>{address}</li>
 <li>{eventtype}</li>
-<li>{teacher}</li>
-<li>{teacherN} - N ist die Trainernummer. Zum Beispiel: {teacher1}</li>
+<li>{teacher} - Name der ersten Trainer:in</li>
+<li>{teachers} - Liste aller Trainer:innen</li>
+<li>{teacherN} - Name eines spezifischen Trainers. Z.B. {teacher1}</li>
 <li>{pollstartdate}</li>
 <li>{qr_id} - QR Code der Userid einfügen</li>
 <li>{qr_username} - QR Code des Usernamen einfügen</li>
-<li>{times} - Sessions (bei mehreren Terminen)</li>
+<li>{dates} - Sessions (bei mehreren Terminen)</li>
 <li>{shorturl} - Verkürzte URL der Buchungsoption</li>
 <li>{usercalendarurl} - Link zum Abonnieren des User-Kalenders (persönliche Ereignisse)</li>
 <li>{coursecalendarurl} - Link zum Abonnieren des Kurs-Kalenders (Kurs-Ereignisse)</li>
@@ -650,7 +660,7 @@ Folgende Platzhalter können im Text verwendet werden:
 <li>{changes} - Was hat sich geändert?</li>
 <li>{bookingdetails} - Zusammenfassung der Buchung (inkl. Sessions und Link zur Buchungsoption)</li>
 <li>{gotobookingoption} - Link zur Buchungsoption</li>
-<li>{status}</li>
+<li>{status} - Buchungsstatus</li>
 <li>{participant}</li>
 <li>{title}</li>
 <li>{duration}</li>
@@ -666,12 +676,13 @@ Folgende Platzhalter können im Text verwendet werden:
 <li>{institution}</li>
 <li>{address}</li>
 <li>{eventtype}</li>
-<li>{teacher}</li>
-<li>{teacherN} - N ist die Trainernummer. Zum Beispiel: {teacher1}</li>
+<li>{teacher} - Name der ersten Trainer:in</li>
+<li>{teachers} - Liste aller Trainer:innen</li>
+<li>{teacherN} - Name eines spezifischen Trainers. Z.B. {teacher1}</li>
 <li>{pollstartdate}</li>
 <li>{qr_id} - QR Code der Userid einfügen</li>
 <li>{qr_username} - QR Code des Usernamen einfügen</li>
-<li>{times} - Sessions (bei mehreren Terminen)</li>
+<li>{dates} - Sessions (bei mehreren Terminen)</li>
 <li>{shorturl} - Verkürzte URL der Buchungsoption</li>
 <li>{usercalendarurl} - Link zum Abonnieren des User-Kalenders (persönliche Ereignisse)</li>
 <li>{coursecalendarurl} - Link zum Abonnieren des Kurs-Kalenders (Kurs-Ereignisse)</li>
@@ -681,7 +692,7 @@ $string['pollurltext_help'] = 'Lassen Sie dieses Feld leer, um den Standardtext 
 <ul>
 <li>{bookingdetails} - Zusammenfassung der Buchung (inkl. Sessions und Link zur Buchungsoption)</li>
 <li>{gotobookingoption} - Link zur Buchungsoption</li>
-<li>{status}</li>
+<li>{status} - Buchungsstatus</li>
 <li>{participant}</li>
 <li>{title}</li>
 <li>{duration}</li>
@@ -697,12 +708,13 @@ $string['pollurltext_help'] = 'Lassen Sie dieses Feld leer, um den Standardtext 
 <li>{institution}</li>
 <li>{address}</li>
 <li>{eventtype}</li>
-<li>{teacher}</li>
-<li>{teacherN} - N ist die Trainernummer. Zum Beispiel: {teacher1}</li>
+<li>{teacher} - Name der ersten Trainer:in</li>
+<li>{teachers} - Liste aller Trainer:innen</li>
+<li>{teacherN} - Name eines spezifischen Trainers. Z.B. {teacher1}</li>
 <li>{pollstartdate}</li>
 <li>{qr_id} - QR Code der Userid einfügen</li>
 <li>{qr_username} - QR Code des Usernamen einfügen</li>
-<li>{times} - Sessions (bei mehreren Terminen)</li>
+<li>{dates} - Sessions (bei mehreren Terminen)</li>
 <li>{shorturl} - Verkürzte URL der Buchungsoption</li>
 <li>{usercalendarurl} - Link zum Abonnieren des User-Kalenders (persönliche Ereignisse)</li>
 <li>{coursecalendarurl} - Link zum Abonnieren des Kurs-Kalenders (Kurs-Ereignisse)</li>
@@ -712,7 +724,7 @@ $string['pollurlteacherstext_help'] = 'Lassen Sie dieses Feld leer, um den Stand
 <ul>
 <li>{bookingdetails} - Zusammenfassung der Buchung (inkl. Sessions und Link zur Buchungsoption)</li>
 <li>{gotobookingoption} - Link zur Buchungsoption</li>
-<li>{status}</li>
+<li>{status} - Buchungsstatus</li>
 <li>{participant}</li>
 <li>{title}</li>
 <li>{duration}</li>
@@ -728,12 +740,13 @@ $string['pollurlteacherstext_help'] = 'Lassen Sie dieses Feld leer, um den Stand
 <li>{institution}</li>
 <li>{address}</li>
 <li>{eventtype}</li>
-<li>{teacher}</li>
-<li>{teacherN} - N ist die Trainernummer. Zum Beispiel: {teacher1}</li>
+<li>{teacher} - Name der ersten Trainer:in</li>
+<li>{teachers} - Liste aller Trainer:innen</li>
+<li>{teacherN} - Name eines spezifischen Trainers. Z.B. {teacher1}</li>
 <li>{pollstartdate}</li>
 <li>{qr_id} - QR Code der Userid einfügen</li>
 <li>{qr_username} - QR Code des Usernamen einfügen</li>
-<li>{times} - Sessions (bei mehreren Terminen)</li>
+<li>{dates} - Sessions (bei mehreren Terminen)</li>
 <li>{shorturl} - Verkürzte URL der Buchungsoption</li>
 <li>{usercalendarurl} - Link zum Abonnieren des User-Kalenders (persönliche Ereignisse)</li>
 <li>{coursecalendarurl} - Link zum Abonnieren des Kurs-Kalenders (Kurs-Ereignisse)</li>
@@ -743,7 +756,7 @@ $string['activitycompletiontext_help'] = 'Lassen Sie dieses Feld leer, um den St
 <ul>
 <li>{bookingdetails} - Zusammenfassung der Buchung (inkl. Sessions und Link zur Buchungsoption)</li>
 <li>{gotobookingoption} - Link zur Buchungsoption</li>
-<li>{status}</li>
+<li>{status} - Buchungsstatus</li>
 <li>{participant}</li>
 <li>{title}</li>
 <li>{duration}</li>
@@ -759,12 +772,13 @@ $string['activitycompletiontext_help'] = 'Lassen Sie dieses Feld leer, um den St
 <li>{institution}</li>
 <li>{address}</li>
 <li>{eventtype}</li>
-<li>{teacher}</li>
-<li>{teacherN} - N ist die Trainernummer. Zum Beispiel: {teacher1}</li>
+<li>{teacher} - Name der ersten Trainer:in</li>
+<li>{teachers} - Liste aller Trainer:innen</li>
+<li>{teacherN} - Name eines spezifischen Trainers. Z.B. {teacher1}</li>
 <li>{pollstartdate}</li>
 <li>{qr_id} - QR Code der Userid einfügen</li>
 <li>{qr_username} - QR Code des Usernamen einfügen</li>
-<li>{times} - Sessions (bei mehreren Terminen)</li>
+<li>{dates} - Sessions (bei mehreren Terminen)</li>
 <li>{shorturl} - Verkürzte URL der Buchungsoption</li>
 <li>{usercalendarurl} - Link zum Abonnieren des User-Kalenders (persönliche Ereignisse)</li>
 <li>{coursecalendarurl} - Link zum Abonnieren des Kurs-Kalenders (Kurs-Ereignisse)</li>
@@ -774,7 +788,7 @@ $string['notificationtext_help'] = 'Lassen Sie dieses Feld leer, um den Standard
 <ul>
 <li>{bookingdetails} - Zusammenfassung der Buchung (inkl. Sessions und Link zur Buchungsoption)</li>
 <li>{gotobookingoption} - Link zur Buchungsoption</li>
-<li>{status}</li>
+<li>{status} - Buchungsstatus</li>
 <li>{participant}</li>
 <li>{title}</li>
 <li>{duration}</li>
@@ -790,12 +804,13 @@ $string['notificationtext_help'] = 'Lassen Sie dieses Feld leer, um den Standard
 <li>{institution}</li>
 <li>{address}</li>
 <li>{eventtype}</li>
-<li>{teacher}</li>
-<li>{teacherN} - N ist die Trainernummer. Zum Beispiel: {teacher1}</li>
+<li>{teacher} - Name der ersten Trainer:in</li>
+<li>{teachers} - Liste aller Trainer:innen</li>
+<li>{teacherN} - Name eines spezifischen Trainers. Z.B. {teacher1}</li>
 <li>{pollstartdate}</li>
 <li>{qr_id} - QR Code der Userid einfügen</li>
 <li>{qr_username} - QR Code des Usernamen einfügen</li>
-<li>{times} - Sessions (bei mehreren Terminen)</li>
+<li>{dates} - Sessions (bei mehreren Terminen)</li>
 <li>{shorturl} - Verkürzte URL der Buchungsoption</li>
 <li>{usercalendarurl} - Link zum Abonnieren des User-Kalenders (persönliche Ereignisse)</li>
 <li>{coursecalendarurl} - Link zum Abonnieren des Kurs-Kalenders (Kurs-Ereignisse)</li>
@@ -805,7 +820,7 @@ $string['pollurl_help'] = 'Folgende Platzhalter können im Text verwendet werden
 <ul>
 <li>{bookingdetails} - Zusammenfassung der Buchung (inkl. Sessions und Link zur Buchungsoption)</li>
 <li>{gotobookingoption} - Link zur Buchungsoption</li>
-<li>{status}</li>
+<li>{status} - Buchungsstatus</li>
 <li>{participant}</li>
 <li>{title}</li>
 <li>{duration}</li>
@@ -819,12 +834,13 @@ $string['pollurl_help'] = 'Folgende Platzhalter können im Text verwendet werden
 <li>{institution}</li>
 <li>{address}</li>
 <li>{eventtype}</li>
-<li>{teacher}</li>
-<li>{teacherN} - N ist die Trainernummer. Zum Beispiel: {teacher1}</li>
+<li>{teacher} - Name der ersten Trainer:in</li>
+<li>{teachers} - Liste aller Trainer:innen</li>
+<li>{teacherN} - Name eines spezifischen Trainers. Z.B. {teacher1}</li>
 <li>{pollstartdate}</li>
 <li>{qr_id} - QR Code der Userid einfügen</li>
 <li>{qr_username} - QR Code des Usernamen einfügen</li>
-<li>{times} - Sessions (bei mehreren Terminen)</li>
+<li>{dates} - Sessions (bei mehreren Terminen)</li>
 <li>{shorturl} - Verkürzte URL der Buchungsoption</li>
 <li>{usercalendarurl} - Link zum Abonnieren des User-Kalenders (persönliche Ereignisse)</li>
 <li>{coursecalendarurl} - Link zum Abonnieren des Kurs-Kalenders (Kurs-Ereignisse)</li>
@@ -840,7 +856,7 @@ $string['helptext:placeholders'] = '<p>
     <ul>
         <li>{bookingdetails} - Zusammenfassung der Buchung (inkl. Sessions und Link zur Buchungsoption)</li>
         <li>{gotobookingoption} - Link zur Buchungsoption</li>
-        <li>{status}</li>
+        <li>{status} - Buchungsstatus</li>
         <li>{participant}</li>
         <li>{title}</li>
         <li>{duration}</li>
@@ -856,12 +872,13 @@ $string['helptext:placeholders'] = '<p>
         <li>{institution}</li>
         <li>{address}</li>
         <li>{eventtype}</li>
-        <li>{teacher}</li>
-        <li>{teacherN} - N ist die Trainernummer. Zum Beispiel: {teacher1}</li>
+        <li>{teacher} - Name der ersten Trainer:in</li>
+<li>{teachers} - Liste aller Trainer:innen</li>
+        <li>{teacherN} - Name eines spezifischen Trainers. Z.B. {teacher1}</li>
         <li>{pollstartdate}</li>
         <li>{qr_id} - QR Code der Userid einfügen</li>
         <li>{qr_username} - QR Code des Usernamen einfügen</li>
-        <li>{times} - Sessions (bei mehreren Terminen)</li>
+        <li>{dates} - Sessions (bei mehreren Terminen)</li>
         <li>{shorturl} - Verkürzte URL der Buchungsoption</li>
         <li>{usercalendarurl} - Link zum Abonnieren des User-Kalenders (persönliche Ereignisse)</li>
         <li>{coursecalendarurl} - Link zum Abonnieren des Kurs-Kalenders (Kurs-Ereignisse)</li>
@@ -871,7 +888,7 @@ $string['helptext:placeholders'] = '<p>
 
 $string['fields'] = 'In bestimmten Bereichen anzuzeigende Informationen';
 $string['reportfields'] = 'Buchungsdatenload als csv, xls, usw.';
-$string['responsesfields'] = 'Auf der Antworten verwalten-Seite';
+$string['responsesfields'] = 'Auf der Buchungen verwalten-Seite';
 $string['optionsfields'] = 'Auf der Seite der Buchungsoptionsübersicht';
 $string['signinsheetfields'] = 'Auf der Unterschriftenliste (PDF-Download)';
 $string['signinonesession'] = 'Termin(e) im Header anzeigen';
@@ -1143,7 +1160,7 @@ $string['associatedcourse'] = 'Dazu gehörender Kurs';
 $string['bookedusers'] = 'Gebuchte Nutzer:innen';
 $string['bookingfulldidntregister'] = 'Es wurden nicht alle Nutzer:innen übertragen, da die Option bereits ausgebucht ist!';
 $string['booktootherbooking'] = 'Nutzer:innen umbuchen / zu anderer Buchungsoption hinzufügen';
-$string['downloadallresponses'] = 'Alle Antworten herunterladen';
+$string['downloadallresponses'] = 'Alle Buchungen herunterladen';
 $string['editotherbooking'] = 'Andere Buchungsoptionen';
 $string['generaterecnum'] = "Eintragsnummern erstellen";
 $string['generaterecnumareyousure'] = "Neue Nummern erstellen und die alten verwerfen!";
@@ -1202,7 +1219,7 @@ $string['messagetext'] = 'Nachricht';
 
 // Teachers.php.
 $string['teachers'] = 'Trainer:innen';
-$string['gotomanageresponses'] = '&lt;&lt; Antworten bearbeiten';
+$string['gotomanageresponses'] = '&lt;&lt; Buchungen verwalten';
 $string['warningonteacherspage'] = '<b>ACHTUNG:</b> Wenn Sie hier Trainer:innen hinzufügen werden diese im Training-Journal <b>zu JEDEM EINZELNEN Termin hinzugefügt</b>.
 Wenn Sie hier Trainer:innen löschen, werden diese im Training-Journal <b>von JEDEM EINZELNEN Termin entfernt</b>.';
 
@@ -1433,8 +1450,11 @@ $string['bookingoptiondefaultsdesc'] = 'Hier können Sie Standardwerte für die 
 $string['addtocalendardesc'] = 'Kurs-Kalenderevents können von ALLEN Kursteilnehmer:innen des Kurses gesehen werden. Falls Sie nicht möchten, dass Kurs-Kalenderevents
 erstellt werden, können Sie diese Einstellung standardmäßig ausschalten und sperren. Keine Sorge: Normale Kalenderevents für gebuchte Optionen (User-Events) werden weiterhin erstellt.';
 
-$string['newcoursecategorycfield'] = 'newcoursecategorycfield';
-$string['newcoursecategorycfielddesc'] = 'newcoursecategorycfielddesc';
+$string['automaticcoursecreation'] = 'Automatische Erstellung von Moodle-Kursen';
+$string['newcoursecategorycfield'] = 'Benutzerdefiniertes Buchungsoptionsfeld für Kurskategorie';
+$string['newcoursecategorycfielddesc'] = 'Wählen Sie ein benutzerdefiniertes Buchungsoptionsfeld, das verwendet werden soll,
+ um die Kurskategorie von automatisch erstellten Kursen festzulegen. Kurse können mit dem Eintrag "Neuer Kurs" im Menü "Einen Kurs auswählen"
+ des Formulars zum Anlegen von Buchungsoptionen automatisch erstellt werden.';
 
 // Optiontemplatessettings.php.
 $string['optiontemplatessettings'] = 'Buchungsoptionsvorlagen';
@@ -1486,7 +1506,7 @@ $string['bstinstitution'] = 'Institution';
 $string['bstparticipants'] = 'Teilnehmer:innen';
 $string['bstteacher'] = 'Trainer/in(nen)';
 $string['bstwaitinglist'] = 'Auf Warteliste';
-$string['bstmanageresponses'] = 'Antworten verwalten';
+$string['bstmanageresponses'] = 'Buchungen verwalten';
 $string['bstcourse'] = 'Kurs';
 $string['bstlink'] = 'Anzeigen';
 
@@ -1599,7 +1619,7 @@ $string['deleteholiday'] = 'Eintrag löschen';
 
 // Caches.
 $string['cachedef_bookingoptions'] = 'Buchungsoptionen (Cache)';
-$string['cachedef_bookingoptionsanswers'] = 'Buchungen (Antworten) von Buchungsoptionen (Cache)';
+$string['cachedef_bookingoptionsanswers'] = 'Buchungen von Buchungsoptionen (Cache)';
 $string['cachedef_bookingoptionstable'] = 'Tabelle mit gesamten SQL-Abfragen (Cache)';
 $string['cachedef_cachedpricecategories'] = 'Preiskategorien in Booking (Cache)';
 $string['cachedef_cachedprices'] = 'Standardpreise in Booking (Cache)';
@@ -1610,7 +1630,7 @@ $string['cachedef_cachedsemesters'] = 'Semester (Cache)';
 // Shortcodes.
 $string['search'] = 'Suche...';
 
-// Optiondates_handler.php.
+// Dates_handler.php.
 $string['chooseperiod'] = 'Zeitraum auswählen';
 $string['chooseperiod_help'] = 'Wählen Sie den Zeitraum innerhalb dessen die Terminserie erstellt werden soll.';
 $string['dates'] = 'Termine';
@@ -1711,7 +1731,7 @@ $string['roundpricesafterformula_desc'] = 'Preise auf ganze Zahlen runden (mathe
 $string['cancelallusers'] = 'Storniere Buchung für alle Nutzer:innen';
 
 // Col_availableplaces.mustache.
-$string['manageresponses'] = 'Antworten verwalten';
+$string['manageresponses'] = 'Buchungen verwalten';
 
 // Bo conditions. TODO: Übersetzen.
 $string['availabilityconditions'] = 'Verfügbarkeit einschränken';

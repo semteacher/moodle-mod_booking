@@ -29,6 +29,7 @@ use mod_booking\booking_settings;
 use mod_booking\booking_option_settings;
 use mod_booking\output\optiondates_only;
 use mod_booking\output\bookingoption_changes;
+use mod_booking\output\bookingoption_description;
 
 require_once($CFG->dirroot.'/user/profile/lib.php');
 
@@ -99,8 +100,8 @@ class message_controller {
     /** @var string $custommessage for custom messages */
     private $custommessage;
 
-    /** @var int $scheduledtime unix timestamp of when to execute the adhoc task */
-    private $scheduledtime;
+    /** @var renderer_base $output*/
+    private $output;
 
     /**
      * Constructor
@@ -117,7 +118,7 @@ class message_controller {
      */
     public function __construct(int $msgcontrparam, int $messageparam, int $cmid, int $bookingid = null,
         int $optionid, int $userid, int $optiondateid = null, $changes = null,
-        string $customsubject = '', string $custommessage = '', int $scheduledtime = null) {
+        string $customsubject = '', string $custommessage = '') {
 
         global $DB, $USER, $PAGE;
 
@@ -138,6 +139,7 @@ class message_controller {
         // Settings.
         $this->bookingsettings = singleton_service::get_instance_of_booking_settings_by_cmid($cmid);
         $this->optionsettings = singleton_service::get_instance_of_booking_option_settings($optionid);
+        $this->output = $PAGE->get_renderer('mod_booking');
 
         if (empty($this->optionsettings->id)) {
             debugging('ERROR: Option settings could not be created. Most probably, the option was deleted from DB.',
@@ -240,7 +242,7 @@ class message_controller {
             rawurlencode($this->user->username) . '&choe=UTF-8" title="Link to Google.com" />';
         $params->participant = fullname($this->user);
         $params->email = $this->user->email;
-        $params->title = format_string($this->optionsettings->text);
+        $params->title = format_string($this->optionsettings->get_title_with_prefix());
         $params->duration = $this->bookingsettings->duration;
         $params->starttime = $this->optionsettings->coursestarttime ?
             userdate($this->optionsettings->coursestarttime, $timeformat) : '';
@@ -279,8 +281,7 @@ class message_controller {
         // If there are changes, let's render them.
         if (!empty($this->changes)) {
             $data = new bookingoption_changes($this->changes, $this->cmid);
-            $output = $PAGE->get_renderer('mod_booking');
-            $params->changes = $output->render_bookingoption_changes($data);
+            $params->changes = $this->output->render_bookingoption_changes($data);
         }
 
         switch ($this->msgcontrparam) {
@@ -315,20 +316,55 @@ class message_controller {
             }
 
             // Render optiontimes using a template.
-            $output = $PAGE->get_renderer('mod_booking');
-            $data = new optiondates_only($sessions);
-            $params->optiontimes = $output->render_optiondates_only($data);
+            $data = new optiondates_only($this->optionsettings);
+            $params->dates = $this->output->render_optiondates_only($data);
 
             // Rendered session description.
             $params->sessiondescription = get_rendered_eventdescription($this->optionid, $this->cmid, DESCRIPTION_CALENDAR);
 
         } else {
-
             // Render optiontimes using a template.
-            $output = $PAGE->get_renderer('mod_booking');
-            $data = new optiondates_only($this->optionsettings->sessions);
-            $params->optiontimes = $output->render_optiondates_only($data);
+            $data = new optiondates_only($this->optionsettings);
+            $params->dates = $this->output->render_optiondates_only($data);
+        }
 
+        // Add placeholders for additional user fields.
+        if (isset($this->user->username)) {
+            $params->username = $this->user->username;
+        }
+        if (isset($this->user->firstname)) {
+            $params->firstname = $this->user->firstname;
+        }
+        if (isset($this->user->lastname)) {
+            $params->lastname = $this->user->lastname;
+        }
+        if (isset($this->user->department)) {
+            $params->department = $this->user->department;
+        }
+        if (isset($this->user->address)) {
+            $params->address = $this->user->address;
+        }
+        if (isset($this->user->city)) {
+            $params->city = $this->user->city;
+        }
+        if (isset($this->user->country)) {
+            $params->country = $this->user->country;
+        }
+
+        // Get bookingoption_description instance for rendering certain data.
+        $params->teachers = $this->optionsettings->render_list_of_teachers();
+
+        // Params for individual teachers.
+        $i = 1;
+        foreach ($this->optionsettings->teachers as $teacher) {
+            $params->{"teacher" . $i} = $teacher->firstname . ' ' . $teacher->lastname;
+            $i++;
+        }
+        // If there's only one teacher, we can use either {teacher} or {teacher1}.
+        if (!empty($params->teacher1)) {
+            $params->teacher = $params->teacher1;
+        } else {
+            $params->teacher = '';
         }
 
         // Add user profile fields to e-mail params.
@@ -377,6 +413,8 @@ class message_controller {
             // Get the mail template specified in plugin config.
             $text = get_config('booking', 'global' . $this->messagefieldname);
 
+        } else if ($this->bookingsettings->{$this->messagefieldname} === "0") {
+            $text = "0";
         } else if (empty($this->bookingsettings->{$this->messagefieldname})) {
 
             // Use default message if none is specified.
@@ -496,6 +534,11 @@ class message_controller {
      * @return bool true if successful
      */
     public function send_or_queue(): bool {
+
+        // If user entered "0" as template, then mails are turned off for this type of messages.
+        if ($this->messagebody === "0") {
+            $this->msgcontrparam = MSGCONTRPARAM_DO_NOT_SEND;
+        }
 
         // Only send if we have message data and if the user hasn't been deleted.
         // Also, do not send, if the param MSGCONTRPARAM_DO_NOT_SEND has been set.

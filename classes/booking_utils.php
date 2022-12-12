@@ -18,6 +18,7 @@ namespace mod_booking;
 
 use html_writer;
 use mod_booking\utils\wb_payment;
+use mod_booking\event\bookingoption_updated;
 use moodle_url;
 use stdClass;
 
@@ -331,7 +332,8 @@ class booking_utils {
 
         // Check Booking Option Status.
         if (isset($values->bostatus) && $values->bostatus == BO_STATUS_CANCELLED_AND_VISIBLE) {
-            $button = '<div class="col-ap-cancelled alert alert-warning">' . get_string('booking_cancelled', 'booking') . "</div><br/>";
+            $button = '<div class="col-ap-cancelled alert alert-warning">' .
+                get_string('bookingoption_cancelled', 'mod_booking') . "</div><br/>";
         }
         // We only run this if we are not on coursepage.
         if (!$coursepage) {
@@ -505,7 +507,7 @@ class booking_utils {
         // We trigger the event only if we have real changes OR if we set the calendar entry to 1.
         if (count($changes) > 0 || $addtocalendar == 1) {
             // Also, we need to trigger the bookingoption_updated event, in order to update calendar entries.
-            $event = \mod_booking\event\bookingoption_updated::create(array('context' => $context, 'objectid' => $optionid,
+            $event = bookingoption_updated::create(array('context' => $context, 'objectid' => $optionid,
                     'userid' => $USER->id));
             $event->trigger();
         }

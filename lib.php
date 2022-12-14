@@ -946,10 +946,6 @@ function booking_update_options($optionvalues, $context) {
         $newcourse['fullname'] = $fullnamewithprefix;
         $newcourse['shortname'] = $shortname;
         $newcourse['categoryid'] = $categoryid;
-        if (!empty($option->coursestarttime) && !empty($option->courseendtime)) {
-            $newcourse['startdate'] = $option->coursestarttime;
-            $newcourse['enddate'] = $option->courseendtime;
-        }
 
         $courses = array($newcourse);
         $createdcourses = core_course_external::create_courses($courses);
@@ -1119,7 +1115,7 @@ function booking_update_options($optionvalues, $context) {
             $numberofoptiontemplates = count($optiontemplatesdata);
 
             // 2) if the user has not activated a valid PRO license, then only allow one booking option.
-            if ($numberofoptiontemplates > 0 && !wb_payment::is_currently_valid_licensekey()) {
+            if ($numberofoptiontemplates > 0 && !wb_payment::pro_version_is_activated()) {
                 $dbrecord = $DB->get_record("booking_options", ['text' => $option->text]);
                 if (empty($dbrecord)) {
                     return 'BOOKING_OPTION_NOT_CREATED';
@@ -2316,7 +2312,7 @@ function subscribe_teacher_to_booking_option($userid, $optionid, $cm, $groupid =
         groups_add_member($groupid, $userid);
     }
 
-    $option->enrol_user($userid, false, $option->booking->settings->teacherroleid);
+    $option->enrol_user($userid, true, $option->booking->settings->teacherroleid, true);
     if ($inserted) {
         $event = \mod_booking\event\teacher_added::create(
                 array('relateduserid' => $userid, 'objectid' => $optionid,

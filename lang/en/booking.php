@@ -1068,7 +1068,9 @@ $string['groupexists'] = 'The group already exists in the target course, please 
 $string['groupdeleted'] = 'This booking instance creates groups automatically in the target course. But the group has been manually deleted in the target course. Activate the following checkbox in order to recreate the group';
 $string['recreategroup'] = 'Recreate group in the target course and enrol users in group';
 $string['copy'] = ' - Copy';
-$string['enrolmentstatus'] = 'Do not enrol users immediately but only at course start time';
+$string['enrolmentstatus'] = 'Enrol users at course start time (Default: Not checked &rarr; enrol them immediately.)';
+$string['enrolmentstatus_help'] = 'Notice: In order for automatic enrolment to work, you need to change the booking instance setting
+ "Automatically enrol users" to "Yes".';
 $string['duplicatename'] = 'This booking option name already exists. Please choose another one.';
 $string['newtemplatesaved'] = 'New template for booking option was saved.';
 $string['manageoptiontemplates'] = 'Manage booking option templates';
@@ -1578,7 +1580,7 @@ $string['bookingoptiondefaultsdesc'] = 'Here you can set default settings for th
 $string['addtocalendardesc'] = 'Course calendar events are visible to ALL users within a course. If you do not want them to be created at all,
 you can turn this setting off and lock it by default. Don\'t worry: user calendar events for booked options will still be created anyways.';
 
-$string['automaticcoursecreation'] = 'Automatic creation of Moodle courses';
+$string['automaticcoursecreation'] = 'Automatic creation of Moodle courses (PRO)';
 $string['newcoursecategorycfield'] = 'Booking option custom field to be used as course category';
 $string['newcoursecategorycfielddesc'] = 'Choose a booking option custom field which will be used as course category for automatically created
  courses using the dropdown entry "New course" in the form for creating new booking options.';
@@ -2159,3 +2161,10 @@ $string['nocancelreason'] = "You need to give a reason for canceling this bookin
 
 // Access.php.
 $string['booking:bookforothers'] = "Book for others";
+
+// Booking_handler.php.
+$string['error:newcoursecategorycfieldmissing'] = 'You need to create a <a href="{$a->bookingcustomfieldsurl}" target="_blank">booking
+ custom field</a> for new course categories first. After you have created one, make sure it is selected in the
+ <a href="{$a->settingsurl}" target="_blank">Booking plugin settings</a>.';
+$string['error:coursecategoryvaluemissing'] = 'You need to choose a value here as it is needed as course category
+ for the automatically created Moodle course.';

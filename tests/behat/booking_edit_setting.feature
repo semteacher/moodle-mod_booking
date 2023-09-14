@@ -198,14 +198,17 @@ Feature: Edit booking's organizer, info and semester settings as a teacher or ad
 
   @javascript
   Scenario: Booking settings - access the teacher pages without login
-    Given I am on the "My booking" Activity page logged in as admin
-    And I click on "Settings" "icon" in the ".allbookingoptionstable_r1" "css_element"
-    And I click on "Edit booking option" "link" in the ".allbookingoptionstable_r1" "css_element"
-    And I wait "1" seconds
-    And I press "Teachers"
-    And I wait "1" seconds
-    And I set the field "Assign teachers:" to "Teacher 1"
-    And I press "Save and go back"
+    Given the following "mod_booking > options" exist:
+      | booking    | text                      | course | description  | startendtimeknown | coursestarttime  | courseendtime | optiondatestart[0] | optiondateend[0] | teachersforoption |
+      | My booking | Booking option - Teachers | C1     | Option deskr | 1                 | ## yesterday ##  | ## +4 days ## | ## tomorrow ##     | ## +2 days ##    | teacher1          |
+    When I am on the "My booking" Activity page logged in as admin
+    ##And I click on "Settings" "icon" in the ".allbookingoptionstable_r1" "css_element"
+    ##And I click on "Edit booking option" "link" in the ".allbookingoptionstable_r1" "css_element"
+    ##And I wait "11" seconds
+    ##And I press "Teachers"
+    ##And I wait "1" seconds
+    ##And I set the field "Assign teachers:" to "Teacher 1"
+    ##And I press "Save and go back"
     And I visit "/admin/category.php?category=modbookingfolder"
     And I set the field "s_booking_teachersnologinrequired" to ""
     And I press "Save changes"
@@ -219,6 +222,7 @@ Feature: Edit booking's organizer, info and semester settings as a teacher or ad
     And I press "Save changes"
     And I log out
     And I visit "/mod/booking/teachers.php"
+    And I wait until the page is ready
     Then I should see "Teacher 1" in the ".page-allteachers-card" "css_element"
     And I follow "Teacher"
     And I should see "Teacher 1" in the ".card-title" "css_element"

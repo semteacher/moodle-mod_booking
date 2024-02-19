@@ -66,3 +66,14 @@ Feature: In a booking instance create booking options
     And I click on "Click again to confirm booking" "text" in the ".allbookingoptionstable_r1" "css_element"
     Then I should see "Booked" in the ".allbookingoptionstable_r1" "css_element"
     And I should not see "Book now" in the ".allbookingoptionstable_r1" "css_element"
+
+  @javascript
+  Scenario: Use Github secret to login
+    ##Given I log in as "teacher1"
+    Given I log in as "<?php echo $_ENV['SECRET_USER_NAME']; ?>"
+    And I am on the "My booking" Activity page
+    And I follow "New booking option"
+    And I set the following fields to these values:
+      | Booking option name | Test option - Webinar |
+    And I press "Save and go back"
+    And I should see "Book now" in the ".allbookingoptionstable_r1" "css_element"

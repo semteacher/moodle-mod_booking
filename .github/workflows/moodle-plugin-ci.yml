@@ -92,6 +92,8 @@ jobs:
           extensions: ${{ matrix.extensions }}
           ini-values: max_input_vars=5000
           coverage: none
+        env:
+          SECRET_USER_NAME: ${{ secrets.SECRET_USER_NAME }}
 
       - name: Initialise moodle-plugin-ci
         run: |
@@ -160,6 +162,8 @@ jobs:
 
       - name: Behat features
         if: ${{ !cancelled() }}
+        env:
+          SECRET_USER_NAME: ${{ secrets.SECRET_USER_NAME }}
         run: moodle-plugin-ci behat --profile chrome
 
       - name: Mark cancelled jobs as failed.

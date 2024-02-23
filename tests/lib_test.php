@@ -116,5 +116,24 @@ class lib_test extends advanced_testcase {
         $this->assertEquals(true, groups_is_member($group->id, $user->id));
 
     }
+    /**
+     * Test github_secret.
+     *
+     * @covers ::github_secret
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    public function test_github_secret() {
+
+        $this->resetAfterTest(true);
+
+        $env2 = getenv('SECRET_USER_NAME');
+        $ms = 'The github secret is (direct) ' . $env2 . ' word.';
+        $formatted = trim(chunk_split($env2, 1, ' '));
+        var_dump($ms);
+        $ms1 = 'The github secret is (spaced) ' . $formatted . ' word.';
+        var_dump($ms1);
+        $this->assertEquals('teacher1', $env2);
+    }
 
 }

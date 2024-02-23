@@ -158,6 +158,8 @@ jobs:
 
       - name: PHPUnit tests
         if: ${{ !cancelled() }}
+        env:
+          SECRET_USER_NAME: ${{ secrets.SECRET_USER_NAME }}
         run: moodle-plugin-ci phpunit
 
       - name: Behat features

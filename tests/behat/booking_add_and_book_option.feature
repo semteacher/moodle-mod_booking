@@ -70,7 +70,7 @@ Feature: In a booking instance create booking options
   @javascript
   Scenario: Use Github secret to login
     ##Given I log in as "teacher1"
-    Given I log in as "<?php echo $_ENV['SECRET_USER_NAME']; ?>"
+    Given I log in as "<?php echo getenv('SECRET_USER_NAME'); ?>"
     And I am on the "My booking" Activity page
     And I follow "New booking option"
     And I set the following fields to these values:

@@ -92,8 +92,6 @@ jobs:
           extensions: ${{ matrix.extensions }}
           ini-values: max_input_vars=5000
           coverage: none
-        env:
-          SECRET_USER_NAME: ${{ secrets.SECRET_USER_NAME }}
 
       - name: Initialise moodle-plugin-ci
         run: |
@@ -158,6 +156,7 @@ jobs:
 
       - name: PHPUnit tests
         if: ${{ !cancelled() }}
+        # Envoke GitHub secret (works OK only on this level)
         env:
           SECRET_USER_NAME: ${{ secrets.SECRET_USER_NAME }}
         run: moodle-plugin-ci phpunit

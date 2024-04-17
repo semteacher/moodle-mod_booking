@@ -29,6 +29,7 @@ namespace mod_booking;
 use advanced_testcase;
 use coding_exception;
 use mod_booking\option\dates_handler;
+use mod_booking\utils\csv_import;
 use mod_booking\price;
 use mod_booking_generator;
 use context_course;

@@ -30,6 +30,7 @@ use advanced_testcase;
 use coding_exception;
 use mod_booking\task\send_reminder_mails;
 use mod_booking\teachers_handler;
+use mod_booking\option\dates_handler;
 use mod_booking_generator;
 use context_system;
 use stdClass;

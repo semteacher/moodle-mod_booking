@@ -139,6 +139,7 @@ class mod_booking_generator extends testing_module_generator {
 
         $record->addtocalendar = !empty($record->addtocalendar) ? $record->addtocalendar : 0;
         $record->maxanswers = !empty($record->maxanswers) ? $record->maxanswers : 0;
+        $record->availability = !empty($record->availability) ? $record->availability : "";
 
         // Process option teachers.
         if (!empty($record->teachersforoption)) {

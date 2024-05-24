@@ -103,3 +103,36 @@ Feature: Enabling installments as admin configuring installments as a teacher an
     Then I should see "Payment successful!"
     And I should see "Option-installment" in the ".payment-success ul.list-group" "css_element"
     And I should see "44.00 EUR" in the ".payment-success ul.list-group" "css_element"
+
+  @javascript
+  Scenario: Booking rule for: one day before installment due payment
+    Given I log in as "admin"
+    And I set the following administration settings values:
+      | Default timezone | Europe/Kyiv |
+      | Force timezone   | Europe/Kyiv |
+    And the following "mod_booking > rules" exist:
+      | conditionname              | contextid | conditiondata | name       | actionname | actiondata                                                                                 | rulename        | ruledata                                      |
+      | select_user_shopping_cart  | 1         | {}            | 1daybefore | send_mail  | {"subject":"installment_custom_subj","template":"installment_custom","templateformat":"1"} | rule_daysbefore | {"days":"1","datefield":"installmentpayment"} |
+    ## It is important to setup next day exactly in minutes
+    And the following "mod_booking > options" exist:
+      | booking     | text               | course | description | useprice | sch_allowinstallment | sch_downpayment | sch_numberofpayments | sch_duedaysbeforecoursestart | optiondateid_1 | daystonotify_1 | coursestarttime_1   | courseendtime_1 |
+      | BookingInst | Option-installment | C1     | Deskr2      | 1        | 1                    | 44              | 2                    | 1                            | 0              | 0              | ## +4321 minutes ## | ## +8 days ##   |
+    And I log out
+    And I am on the "BookingInst" Activity page logged in as student1
+    And I click on "Add to cart" "text" in the ".allbookingoptionstable_r1 .booknow" "css_element"
+    And I visit "/local/shopping_cart/checkout.php"
+    And I wait until the page is ready
+    And I set the field "Use installment payments" to "1"
+    When I press "Checkout"
+    And I wait "1" seconds
+    And I press "Confirm"
+    And I wait until the page is ready
+    Then I should see "Payment successful!"
+    And I log out
+    And I log in as "admin"
+    And I trigger cron
+    And I visit "/report/loglive/index.php"
+    And I wait "1" seconds
+    And I should see "Custom message: An e-mail with subject '1daybefore' has been sent to user with id: '2'"
+    ## Logout is mandatory for admin pages to avoid error
+    And I log out

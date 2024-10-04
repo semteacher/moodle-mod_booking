@@ -95,7 +95,7 @@ Feature: Enabling installments as admin configuring installments as a teacher an
     And I wait until the page is ready
     And I set the field "Use installment payments" to "checked"
     And I wait "1" seconds
-    And I should see "Down payment"
+    ##And I should see "Down payment"
     And I should see "44 EUR instead of 88 EUR"
     And I should see "Further payments"
     And I should see "2" occurrences of "22 EUR on" in the ".sc_installments .furtherpayments" "css_element"

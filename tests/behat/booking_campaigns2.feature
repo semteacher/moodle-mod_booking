@@ -70,15 +70,27 @@ Feature: Create booking campaigns2 for booking options as admin and booking it a
       | BookingCMP | Option-priceexclude | student8 |
       | BookingCMP | Option-priceinclude | student4 |
       | BookingCMP | Option-priceinclude | student5 |
+    And the following "activity" exists:
+      | activity       | page                         |
+      | course         | C1                           |
+      | idnumber       | listpage1                    |
+      | name           | BookingOptionsList           |
+      | intro          | BookingOptionsList Page      |
+      | content        | [allekurseliste requirelogin=false search=true filter=true sort=true] |
+      | contentformat  | 0                            |
     And I change viewport size to "1366x10000"
 
-  ## @javascript
+  @javascript
   Scenario: Booking campaigns2: conditions states option customfield does not contain and profile field does contain values
     Given the following "mod_booking > campaigns" exist:
       | name      | type | json                                                                                                                                                                                                                                                    | starttime       | endtime         | pricefactor | limitfactor |
       | campaign3 | 1    | {"bofieldname":"bcustom1","fieldvalue":"exclude","campaignfieldnameoperator":"!~","cpfield":"ucustom1","cpoperator":"~","cpvalue":["student"],"blockoperator":"blockbelow","blockinglabel":"Below50","hascapability":null,"percentageavailableplaces":50} | ## yesterday ## | ## + 1 month ## | 1           | 1           |
     ## Verify "above" blocking campaing2
-    When I am on the "BookingCMP" Activity page logged in as student1
+    ##When I am on the "BookingCMP" Activity page logged in as guest
+    ##And I wait "30" seconds
+    And I am on the "listpage1" Activity page logged in as admin
+    And I wait "30" seconds
+    And I am on the "listpage1" Activity page
     And I should see "Book now" in the ".allbookingoptionstable_r1 .booknow" "css_element"
     And I should see "Below50" in the ".allbookingoptionstable_r2 .booknow" "css_element"
     And I should see "Below50" in the ".allbookingoptionstable_r3 .booknow" "css_element"

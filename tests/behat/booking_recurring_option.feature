@@ -20,15 +20,15 @@ Feature: Create recurring options as tescher and configuring it.
       | booking  | C1     | MyBooking | booking descr | teacher1       | Webinar   | All bookings                     |
     And the following "mod_booking > options" exist:
       | booking   | text      | course | description | limitanswers | maxanswers | datesmarker | optiondateid_0 | daystonotify_0 | coursestarttime_0 | courseendtime_0 |
-      | MyBooking | RecurrOpt | C1     | recurring   | 1            | 4          | 1           | 0              | 0              | 2373200400        | 2373208200      |
-    ## 2045/03/15 14:20 - 2045/03/15 16:30
+      | MyBooking | RecurrOpt | C1     | recurring   | 1            | 4          | 1           | 0              | 0              | 2375878800        | 2375886600      |
+    ## 2045/04/15 14:20 - 2045/04/15 16:30
     ## Unfortunately, TinyMCE is slow and has misbehavior which might cause number of site-wide issues. So - we disable it.
     And the following config values are set as admin:
       | config        | value         |
       | texteditors   | atto,textarea |
     ## Forcing of timezome is important for date validation
-      | timezone      | Europe/Berlin |
-      | forcetimezone | Europe/Berlin |
+      | timezone      | Europe/London |
+      | forcetimezone | Europe/London |
     And I change viewport size to "1366x10000"
 
   @javascript
@@ -46,11 +46,11 @@ Feature: Create recurring options as tescher and configuring it.
     And I press "Save"
     And I wait until the page is ready
     And I should see "RecurrOpt 1" in the ".allbookingoptionstable_r2" "css_element"
-    And I should see "16 March 2045, 3:20 PM" in the ".allbookingoptionstable_r2" "css_element"
+    And I should see "16 April 2045, 3:20 PM" in the ".allbookingoptionstable_r2" "css_element"
     And I should see "RecurrOpt 2" in the ".allbookingoptionstable_r3" "css_element"
-    And I should see "17 March 2045, 3:20 PM" in the ".allbookingoptionstable_r3" "css_element"
+    And I should see "17 April 2045, 3:20 PM" in the ".allbookingoptionstable_r3" "css_element"
     And I should see "RecurrOpt 3" in the ".allbookingoptionstable_r4" "css_element"
-    And I should see "18 March 2045, 3:20 PM" in the ".allbookingoptionstable_r4" "css_element"
+    And I should see "18 April 2045, 3:20 PM" in the ".allbookingoptionstable_r4" "css_element"
     ## Update existing recuring options
     And I click on "Edit booking option" "icon" in the ".allbookingoptionstable_r1" "css_element"
     And I wait until the page is ready
@@ -70,10 +70,10 @@ Feature: Create recurring options as tescher and configuring it.
     And I should see "RecurrOptUpd" in the ".allbookingoptionstable_r3" "css_element"
     And I should see "RecurrOptUpd" in the ".allbookingoptionstable_r4" "css_element"
     And I should see "RecurrOptUpd" in the ".allbookingoptionstable_r5" "css_element"
-    And I should see "22 March 2045, 3:20 PM" in the ".allbookingoptionstable_r5" "css_element"
+    And I should see "22 April 2045, 3:20 PM" in the ".allbookingoptionstable_r5" "css_element"
     And I should see "RecurrOptUpd" in the ".allbookingoptionstable_r6" "css_element"
     ## Because of summmer time:
-    And I should see "29 March 2045, 4:20 PM" in the ".allbookingoptionstable_r6" "css_element"
+    And I should see "29 April 2045, 3:20 PM" in the ".allbookingoptionstable_r6" "css_element"
     ## Update existing recuring options 2nd time
     And I click on "Edit booking option" "icon" in the ".allbookingoptionstable_r1" "css_element"
     And I wait until the page is ready
@@ -93,34 +93,34 @@ Feature: Create recurring options as tescher and configuring it.
     And I should see "RecurrOptUpd" in the ".allbookingoptionstable_r5" "css_element"
     ## Potential issue - name not updated?
     And I should see "RecurrOptUpd 1" in the ".allbookingoptionstable_r6" "css_element"
-    And I should see "14 April 2045, 4:20 PM" in the ".allbookingoptionstable_r6" "css_element"
+    And I should see "15 May 2045, 3:20 PM" in the ".allbookingoptionstable_r6" "css_element"
     And I should see "RecurrOptUpd 2" in the ".allbookingoptionstable_r7" "css_element"
-    And I should see "14 May 2045, 4:20 PM" in the ".allbookingoptionstable_r7" "css_element"
+    And I should see "14 June 2045, 3:20 PM" in the ".allbookingoptionstable_r7" "css_element"
     And I should see "RecurrOptUpdMonth" in the ".allbookingoptionstable_r8" "css_element"
-    And I should see "15 March 2045, 3:20 PM" in the ".allbookingoptionstable_r8" "css_element"
+    And I should see "15 April 2045, 3:20 PM" in the ".allbookingoptionstable_r8" "css_element"
     And I log out
     ## Validate recurring options as student
     And I am on the "MyBooking" Activity page logged in as student1
     And I should see "Book now" in the ".allbookingoptionstable_r8 .booknow" "css_element"
     And I should see "RecurrOptUpd" in the ".allbookingoptionstable_r1" "css_element"
-    And I should see "16 March 2045, 3:20 PM" in the ".allbookingoptionstable_r1" "css_element"
+    And I should see "16 April 2045, 3:20 PM" in the ".allbookingoptionstable_r1" "css_element"
     And I should see "Only users who have previously booked this option are allowed to book." in the ".allbookingoptionstable_r1" "css_element"
     And I should see "RecurrOptUpd" in the ".allbookingoptionstable_r2" "css_element"
-    And I should see "17 March 2045, 3:20 PM" in the ".allbookingoptionstable_r2" "css_element"
+    And I should see "17 April 2045, 3:20 PM" in the ".allbookingoptionstable_r2" "css_element"
     And I should see "Only users who have previously booked this option are allowed to book." in the ".allbookingoptionstable_r2" "css_element"
     And I should see "RecurrOptUpd" in the ".allbookingoptionstable_r3" "css_element"
-    And I should see "18 March 2045, 3:20 PM" in the ".allbookingoptionstable_r3" "css_element"
+    And I should see "18 April 2045, 3:20 PM" in the ".allbookingoptionstable_r3" "css_element"
     And I should see "Only users who have previously booked this option are allowed to book." in the ".allbookingoptionstable_r3" "css_element"
     And I should see "RecurrOptUpd" in the ".allbookingoptionstable_r4" "css_element"
-    And I should see "22 March 2045, 3:20 PM" in the ".allbookingoptionstable_r4" "css_element"
+    And I should see "22 April 2045, 3:20 PM" in the ".allbookingoptionstable_r4" "css_element"
     And I should see "Only users who have previously booked this option are allowed to book." in the ".allbookingoptionstable_r4" "css_element"
     And I should see "RecurrOptUpd" in the ".allbookingoptionstable_r5" "css_element"
-    And I should see "29 March 2045, 4:20 PM" in the ".allbookingoptionstable_r5" "css_element"
+    And I should see "29 April 2045, 3:20 PM" in the ".allbookingoptionstable_r5" "css_element"
     And I should see "Only users who have previously booked this option are allowed to book." in the ".allbookingoptionstable_r5" "css_element"
     And I should see "RecurrOptUpd 1" in the ".allbookingoptionstable_r6" "css_element"
-    And I should see "14 April 2045, 4:20 PM" in the ".allbookingoptionstable_r6" "css_element"
+    And I should see "15 May 2045, 3:20 PM" in the ".allbookingoptionstable_r6" "css_element"
     And I should see "RecurrOptUpd 2" in the ".allbookingoptionstable_r7" "css_element"
-    And I should see "14 May 2045, 4:20 PM" in the ".allbookingoptionstable_r7" "css_element"
+    And I should see "14 June 2045, 3:20 PM" in the ".allbookingoptionstable_r7" "css_element"
     And I should see "RecurrOptUpdMonth" in the ".allbookingoptionstable_r8" "css_element"
 
   @javascript
@@ -138,14 +138,14 @@ Feature: Create recurring options as tescher and configuring it.
     And I press "Save"
     And I wait until the page is ready
     And I should see "RecurrOpt 1" in the ".allbookingoptionstable_r2" "css_element"
-    And I should see "16 March 2045, 3:20 PM" in the ".allbookingoptionstable_r2" "css_element"
+    And I should see "16 April 2045, 3:20 PM" in the ".allbookingoptionstable_r2" "css_element"
     And I should see "RecurrOpt 2" in the ".allbookingoptionstable_r3" "css_element"
-    And I should see "17 March 2045, 3:20 PM" in the ".allbookingoptionstable_r3" "css_element"
+    And I should see "17 April 2045, 3:20 PM" in the ".allbookingoptionstable_r3" "css_element"
     ## Update existing recuring options
     And I click on "Edit booking option" "icon" in the ".allbookingoptionstable_r1" "css_element"
     And I wait until the page is ready
     And I expand all fieldsets
-    And I click on "15 March 2045" "text" in the "#booking_optiondate_1" "css_element"
+    And I click on "15 April 2045" "text" in the "#booking_optiondate_1" "css_element"
     And I set the following fields to these values:
       | coursestarttime_1[day]    | 17   |
       | courseendtime_1[day]      | 17   |
@@ -157,14 +157,14 @@ Feature: Create recurring options as tescher and configuring it.
     And I wait until the page is ready
     ## Verify that dates of child options have been updated
     And I should see "RecurrOpt 1" in the ".allbookingoptionstable_r2" "css_element"
-    And I should see "18 March 2045, 3:20 PM" in the ".allbookingoptionstable_r2" "css_element"
+    And I should see "18 April 2045, 3:20 PM" in the ".allbookingoptionstable_r2" "css_element"
     And I should see "RecurrOpt 2" in the ".allbookingoptionstable_r3" "css_element"
-    And I should see "19 March 2045, 3:20 PM" in the ".allbookingoptionstable_r3" "css_element"
+    And I should see "19 April 2045, 3:20 PM" in the ".allbookingoptionstable_r3" "css_element"
     ## Update date of child
     And I click on "Edit booking option" "icon" in the ".allbookingoptionstable_r3" "css_element"
     And I wait until the page is ready
     And I expand all fieldsets
-    And I click on "19 March 2045" "text" in the "#booking_optiondate_1" "css_element"
+    And I click on "19 April 2045" "text" in the "#booking_optiondate_1" "css_element"
     And I set the following fields to these values:
       | coursestarttime_1[day]    | 20   |
       | courseendtime_1[day]      | 20   |
@@ -175,7 +175,7 @@ Feature: Create recurring options as tescher and configuring it.
     And I click on "Edit booking option" "icon" in the ".allbookingoptionstable_r1" "css_element"
     And I wait until the page is ready
     And I expand all fieldsets
-    And I click on "17 March 2045" "text" in the "#booking_optiondate_1" "css_element"
+    And I click on "17 April 2045" "text" in the "#booking_optiondate_1" "css_element"
     And I set the following fields to these values:
       | coursestarttime_1[day]    | 10   |
       | courseendtime_1[day]      | 10   |
@@ -187,7 +187,7 @@ Feature: Create recurring options as tescher and configuring it.
     And I wait until the page is ready
     ## Verify that date of child options has been updated
     And I should see "RecurrOpt 1" in the ".allbookingoptionstable_r2" "css_element"
-    And I should see "11 March 2045, 3:20 PM" in the ".allbookingoptionstable_r2" "css_element"
+    And I should see "11 April 2045, 3:20 PM" in the ".allbookingoptionstable_r2" "css_element"
     ## Verify that date of child options has NOT been updated
     And I should see "RecurrOpt 2" in the ".allbookingoptionstable_r3" "css_element"
-    And I should see "20 March 2045, 3:20 PM" in the ".allbookingoptionstable_r3" "css_element"
+    And I should see "20 April 2045, 3:20 PM" in the ".allbookingoptionstable_r3" "css_element"

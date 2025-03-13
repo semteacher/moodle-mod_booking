@@ -444,6 +444,9 @@ class dates {
 
             // There might be one more way data is submitted.
             if (!empty($formvalues["coursestarttime"]) && !empty($formvalues["courseendtime"])) {
+                // Fix for DST not tobe applied on recurring options.
+                $formvalues["coursestarttime"]["applydst"] = $formvalues["applydst"] ?? true;
+                $formvalues["courseendtime"]["applydst"] = $formvalues["applydst"] ?? true;
                 $dates[] = [
                     'id' => 0,
                     'index' => 0,
@@ -468,6 +471,9 @@ class dates {
                 if (is_array($formvalues[MOD_BOOKING_FORM_COURSESTARTTIME . $counter])) {
                     $coursestarttimearr = $formvalues[MOD_BOOKING_FORM_COURSESTARTTIME . $counter];
                     $courseendtimearr = $formvalues[MOD_BOOKING_FORM_COURSEENDTIME . $counter];
+                    // Fix for DST not tobe applied on recurring options.
+                    $coursestarttimearr["applydst"] = $formvalues["applydst"] ?? true;
+                    $courseendtimearr["applydst"] = $formvalues["applydst"] ?? true;
                     // Splat opreaton does not work with associative arrays in php < 8.
                     if (PHP_MAJOR_VERSION < 8) {
                         $coursestarttime = make_timestamp(
@@ -476,6 +482,9 @@ class dates {
                             $coursestarttimearr['day'],
                             $coursestarttimearr['hour'],
                             $coursestarttimearr['minute'],
+                            $coursestarttimearr['second'] ?? 0,
+                            $coursestarttimearr['timezone'] ?? 99,
+                            $coursestarttimearr['applydst']
                         );
                         $courseendtime = make_timestamp(
                             $courseendtimearr['year'],
@@ -483,6 +492,9 @@ class dates {
                             $courseendtimearr['day'],
                             $courseendtimearr['hour'],
                             $courseendtimearr['minute'],
+                            $courseendtimearr['second'] ?? 0,
+                            $courseendtimearr['timezone'] ?? 99,
+                            $courseendtimearr['applydst']
                         );
                     } else {
                         $coursestarttime = make_timestamp(...$coursestarttimearr);

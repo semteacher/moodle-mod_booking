@@ -335,6 +335,7 @@ class recurringoptions extends field_base {
                 'copyoptionid' => 0, // Do NOT set it here as we might get stuck in a loop.
                 'oldcopyoptionid' => $data->copyoptionid ?? 0,
                 'returnurl' => '',
+                'applydst' => 0,
             ];
 
             fields_info::set_data($templateoption);

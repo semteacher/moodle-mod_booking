@@ -764,24 +764,28 @@ class dates_handler {
         $strftimedaydatetime = new lang_string('strftimedaydatetime', 'langconfig', null, $lang);
         // Friday, 3. February 2023, 11:45.
 
-        $date->starttimestamp = $starttime; // Unix timestamps.
-        $date->starttime = userdate($starttime, $strftimetime); // 10:30.
+        
+        $dateobj = new \DateTimeImmutable();
+        $startobj = $dateobj->setTimestamp(intval($starttime));
+        $date->starttimestamp = $startobj->getTimestamp(); // Unix timestamps.
+        $date->starttime = userdate($startobj->getTimestamp(), $strftimetime); // 10:30.
 
         if (!empty($endtime)) {
-            $date->endtimestamp = $endtime; // Unix timestamps.
-            $date->endtime = userdate($endtime, $strftimetime); // 10:30.
+            $endobj = $dateobj->setTimestamp(intval($endtime));
+            $date->endtimestamp = $endobj->getTimestamp(); // Unix timestamps.
+            $date->endtime = userdate($endobj->getTimestamp(), $strftimetime); // 10:30.
         }
 
         if ($ashtml) {
-            $date->startdate = userdate($starttime, $strftimedaydate); // Friday, 3. February 2023.
-            $date->startdatetime = userdate($starttime, $strftimedaydatetime); // Friday, 3. February 2023, 11:45.
+            $date->startdate = userdate($startobj->getTimestamp(), $strftimedaydate); // Friday, 3. February 2023.
+            $date->startdatetime = userdate($startobj->getTimestamp(), $strftimedaydatetime); // Friday, 3. February 2023, 11:45.
             $datespan = html_writer::span($date->startdate, 'date');
             $timespan = html_writer::span($date->starttime, 'time');
 
             if (!empty($endtime)) {
-                $date->enddatetime = userdate($endtime, $strftimedaydatetime); // Friday, 3. February 2023, 12:45.
-                $date->enddate = userdate($endtime, $strftimedaydate); // Friday, 3. February 2023.
-                $timespan = html_writer::span($date->starttime . ' - ' . $date->endtime . get_string('h', 'mod_booking'), 'time');
+                $date->enddatetime = userdate($endobj->getTimestamp(), $strftimedaydatetime); // Friday, 3. February 2023, 12:45.
+                $date->enddate = userdate($endobj->getTimestamp(), $strftimedaydate); // Friday, 3. February 2023.
+                $timespan = html_writer::span($startobj->getTimestamp() . ' - ' . $date->endtime . get_string('h', 'mod_booking'), 'time');
                 if ($date->startdate !== $date->enddate) {
                     $datespan = html_writer::span($date->startdate . ' - ' . $date->enddate, 'date');
                 }
@@ -790,15 +794,15 @@ class dates_handler {
             $date->htmlstring = $datespan . $timespan;
         }
         if ($showweekdays) {
-            $date->startdate = userdate($starttime, $strftimedaydate); // Friday, 3. February 2023.
-            $date->startdatetime = userdate($starttime, $strftimedaydatetime) . get_string('h', 'mod_booking');
+            $date->startdate = userdate($startobj->getTimestamp(), $strftimedaydate); // Friday, 3. February 2023.
+            $date->startdatetime = userdate($startobj->getTimestamp(), $strftimedaydatetime) . get_string('h', 'mod_booking');
             // Friday, 3. February 2023, 11:45.
             $date->datestring = $date->startdatetime;
 
             if (!empty($endtime)) {
-                $date->enddatetime = userdate($endtime, $strftimedaydatetime);
+                $date->enddatetime = userdate($endobj->getTimestamp(), $strftimedaydatetime);
                 // Friday, 3. February 2023, 12:45.
-                $date->enddate = userdate($endtime, $strftimedaydate); // Friday, 3. February 2023.
+                $date->enddate = userdate($endobj->getTimestamp(), $strftimedaydate); // Friday, 3. February 2023.
                 $date->datestring .= " - ";
                 $date->datestring .= $date->startdate != $date->enddate ?
                     $date->enddatetime . get_string('h', 'mod_booking') :
@@ -808,14 +812,14 @@ class dates_handler {
             }
         } else {
             // Without weekdays.
-            $date->startdate = userdate($starttime, $strftimedate); // 3. February 2023.
-            $date->startdatetime = userdate($starttime, $strftimedatetime); // 3. February 2023, 11:45.
+            $date->startdate = userdate($startobj->getTimestamp(), $strftimedate); // 3. February 2023.
+            $date->startdatetime = userdate($startobj->getTimestamp(), $strftimedatetime); // 3. February 2023, 11:45.
             $date->datestring = $date->startdatetime;
 
             if (!empty($endtime)) {
-                $date->enddatetime = userdate($endtime, $strftimedatetime);
-                $date->enddate = userdate($endtime, $strftimedate); // 3. February 2023.
-                $date->enddatetime = userdate($endtime, $strftimedatetime);
+                $date->enddatetime = userdate($endobj->getTimestamp(), $strftimedatetime);
+                $date->enddate = userdate($endobj->getTimestamp(), $strftimedate); // 3. February 2023.
+                $date->enddatetime = userdate($endobj->getTimestamp(), $strftimedatetime);
                 // Friday, 3. February 2023, 12:45.
                 $date->datestring .= " - ";
                 $date->datestring .= $date->startdate != $date->enddate ?

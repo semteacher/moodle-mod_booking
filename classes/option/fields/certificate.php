@@ -111,35 +111,39 @@ class certificate extends field_base {
 
         $instance = new certificate();
         $changes = [];
-        $key = fields_info::get_class_name(static::class);
-        $value = $formdata->{$key} ?? null;
+
+        $certdata = new stdClass();
+        $certdata->id = $formdata->id;
+
+        $classkey = fields_info::get_class_name(static::class);
+        $value = $formdata->{$classkey} ?? 0;
+        $certdata->{$classkey} = $value;
 
         if (!empty($value)) {
-            booking_option::add_data_to_json($newoption, $key, $formdata->{$key});
+            booking_option::add_data_to_json($newoption, $classkey, $formdata->{$classkey});
         } else {
-            booking_option::remove_key_from_json($newoption, $key);
+            booking_option::remove_key_from_json($newoption, $classkey);
         }
 
         // Add expiration key to json.
         $keys = self::$certificatedatekeys;
         // Process each field and save it to json.
         foreach ($keys as $key) {
-            $valueexpirydate = $formdata->{$key} ?? null;
+            $valueexpirydate = $formdata->{$key} ?? 0;
+            //$certdata->{$key} = $valueexpirydate;
 
             if (!empty($valueexpirydate)) {
                 booking_option::add_data_to_json($newoption, $key, $formdata->{$key});
             } else {
                 booking_option::remove_key_from_json($newoption, $key);
             }
+            $certdata->{$key} = booking_option::get_value_of_json_by_key((int) $formdata->id, $key) ?? 0;
         }
 
-        $certificatechanges = $instance->check_for_changes($formdata, $instance, null, $key, $value);
-        if (!empty($certificatechanges)) {
-            $changes[$key] = $certificatechanges;
-        };
+        $changes = $instance->check_for_changes($certdata, $instance);
 
         // We can return an warning message here.
-        return ['changes' => $changes];
+        return $changes;
     }
 
     /**

@@ -108,13 +108,13 @@ class bookingbasetest {
      * @param int $numberofinstances
      */
     public function __construct(
-        ?bookingbasetestsettings $settings = null,
-        int $numberofusers = 1,
-        int $numberofbookings = 1,
-        int $numberofcourses = 1,
+        bookingbasetestsettings $settings,
+        int $numberofusers,
+        int $numberofbookings,
+        int $numberofcourses,
         int $numberofinstances = 1
     ) {
-        $this->settings = $settings ?? new bookingbasetestsettings();
+        $this->settings = $settings;
         $this->numberofusers = $numberofusers;
         $this->numberofbookings = $numberofbookings;
         $this->numberofcourses = $numberofcourses;

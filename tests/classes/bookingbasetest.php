@@ -101,7 +101,7 @@ class bookingbasetest {
     /**
      * Constructor.
      *
-     * @param bookingbasetestsettings $settings
+     * @param bookingbasetestsettings|null $settings
      * @param int $numberofusers
      * @param int $numberofbookings
      * @param int $numberofcourses

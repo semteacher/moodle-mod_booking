@@ -36,6 +36,7 @@ use mod_booking_generator;
 use mod_booking\local\connectedcourse;
 use local_entities\entitiesrelation_handler;
 use mod_booking\tests\bookingbasetest;
+use mod_booking\tests\bookingbasetestsettings;
 use context_system;
 use context_module;
 use core_course_category;
@@ -87,7 +88,8 @@ final class booking_testing_framework_test extends advanced_testcase {
     public function test_framework_option_creation(array $bdata): void {
 
         $this->setAdminUser();
-        $bookingtest = new bookingbasetest(null, 3, 2, 1, 1);
+        $basesettings = new bookingbasetestsettings();
+        $bookingtest = new bookingbasetest($basesettings, 3, 2, 1, 1);
         $option1 = $bookingtest->returnfirstoption();
         $student1 = $bookingtest->return_student1();
 

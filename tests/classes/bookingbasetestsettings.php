@@ -39,7 +39,11 @@ class bookingbasetestsettings {
      *
      * @var array
      */
-    protected array $coursedata = [];
+    protected array $coursedata = [
+        'shortname' => 'testcourse',
+        'fullname' => 'Test Course',
+        'enablecompletion' => 1,
+    ];
 
     /**
      * Default booking instance data.
@@ -67,7 +71,10 @@ class bookingbasetestsettings {
      *
      * @var array
      */
-    protected array $optiondata = [];
+    protected array $optiondata = [
+        'text' => 'Booking Option',
+        'description' => 'Option Description',
+    ];
 
     /**
      * Teacher role to use for enrolments.

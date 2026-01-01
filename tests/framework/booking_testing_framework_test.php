@@ -89,6 +89,7 @@ final class booking_testing_framework_test extends advanced_testcase {
 
         $this->setAdminUser();
         $basesettings = new bookingbasetestsettings();
+        $basesettings->set_option_data($bdata['options'][0]);
         $bookingtest = new bookingbasetest($basesettings, 3, 2, 1, 1);
         $option1 = $bookingtest->returnfirstoption();
         $student1 = $bookingtest->return_student1();
@@ -118,23 +119,72 @@ final class booking_testing_framework_test extends advanced_testcase {
      * @throws \UnexpectedValueException
      */
     public static function booking_common_settings_provider(): array {
-        $bdata = [
-            'name' => 'Test Booking 1',
-            'eventtype' => 'Test event',
-            'enablecompletion' => 1,
-            'bookedtext' => ['text' => 'text'],
-            'waitingtext' => ['text' => 'text'],
-            'notifyemail' => ['text' => 'text'],
-            'statuschangetext' => ['text' => 'text'],
-            'deletedtext' => ['text' => 'text'],
-            'pollurltext' => ['text' => 'text'],
-            'pollurlteacherstext' => ['text' => 'text'],
-            'notificationtext' => ['text' => 'text'],
-            'userleave' => ['text' => 'text'],
-            'tags' => '',
-            'completion' => 2,
-            'showviews' => ['mybooking,myoptions,optionsiamresponsiblefor,showall,showactive,myinstitution'],
+        return [
+            'simple booking scenario' => [
+                [
+                    'booking' => [
+                        'name' => 'Rule Specific Time Test',
+                        'eventtype' => 'Test rules',
+                        'enablecompletion' => 1,
+                        'bookedtext' => ['text' => 'text'],
+                        'waitingtext' => ['text' => 'text'],
+                        'notifyemail' => ['text' => 'text'],
+                        'statuschangetext' => ['text' => 'text'],
+                        'deletedtext' => ['text' => 'text'],
+                        'pollurltext' => ['text' => 'text'],
+                        'pollurlteacherstext' => ['text' => 'text'],
+                        'notificationtext' => ['text' => 'text'],
+                        'userleave' => ['text' => 'text'],
+                        'tags' => '',
+                        'completion' => 2,
+                        'showviews' => ['mybooking,myoptions,optionsiamresponsiblefor,showall,showactive,myinstitution'],
+                    ],
+                    'options' => [
+                        // Option 1 with 1 session in 3 days.
+                        0 => [
+                            'text' => 'Option: in 3 days',
+                            'description' => 'Will start in 3 days',
+                            'chooseorcreatecourse' => 1, // Required.
+                            'optiondateid_0' => "0",
+                            'daystonotify_0' => "0",
+                            'coursestarttime_0' => strtotime('+3 days', time()),
+                            'courseendtime_0' => strtotime('+4 days', time()),
+                        ],
+                        // Option 2 with 2 session started in the remote future.
+                        1 => [
+                            'text' => 'Option-with-two-sessions',
+                            'description' => 'This option has two optiondates',
+                            'chooseorcreatecourse' => 1, // Required.
+                            'optiondateid_0' => "0",
+                            'daystonotify_0' => "0",
+                            'coursestarttime_0' => strtotime('2 June 2050 15:00'),
+                            'courseendtime_0' => strtotime('2 June 2050 16:00'),
+                            'optiondateid_1' => "0",
+                            'daystonotify_1' => "0",
+                            'coursestarttime_1' => strtotime('8 June 2050 15:00'),
+                            'courseendtime_1' => strtotime('8 June 2050 16:00'),
+                        ],
+                        // Option 3 with 3 session started in the remote future.
+                        2 => [
+                            'text' => 'Option-with-three-sessions',
+                            'description' => 'This option has three optiondates',
+                            'chooseorcreatecourse' => 1, // Required.
+                            'optiondateid_0' => "0",
+                            'daystonotify_0' => "0",
+                            'coursestarttime_0' => strtotime('2 June 2050 15:00'),
+                            'courseendtime_0' => strtotime('2 June 2050 16:00'),
+                            'optiondateid_1' => "0",
+                            'daystonotify_1' => "0",
+                            'coursestarttime_1' => strtotime('8 June 2050 15:00'),
+                            'courseendtime_1' => strtotime('8 June 2050 16:00'),
+                            'optiondateid_2' => "0",
+                            'daystonotify_2' => "0",
+                            'coursestarttime_2' => strtotime('15 June 2050 15:00'),
+                            'courseendtime_2' => strtotime('15 June 2050 16:00'),
+                        ],
+                    ],
+                ],
+            ],
         ];
-        return ['bdata' => [$bdata]];
     }
 }

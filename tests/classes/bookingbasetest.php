@@ -86,7 +86,7 @@ class bookingbasetest {
     /**
      * @var int
      */
-    protected int $numberofbookings;
+    protected int $numberofbookingoptions;
 
     /**
      * @var int
@@ -96,29 +96,29 @@ class bookingbasetest {
     /**
      * @var int
      */
-    protected int $numberofinstances;
+    protected int $numberofbookings;
 
     /**
      * Constructor.
      *
      * @param bookingbasetestsettings|null $settings
      * @param int $numberofusers
-     * @param int $numberofbookings
+     * @param int $numberofbookingoptions
      * @param int $numberofcourses
-     * @param int $numberofinstances
+     * @param int $numberofbookings
      */
     public function __construct(
-        bookingbasetestsettings $settings,
-        int $numberofusers,
-        int $numberofbookings,
-        int $numberofcourses,
-        int $numberofinstances = 1
+        ?bookingbasetestsettings $settings = null,
+        int $numberofusers = 1,
+        int $numberofbookingoptions = 1,
+        int $numberofcourses = 1,
+        int $numberofbookings = 1
     ) {
-        $this->settings = $settings;
+        $this->settings = $settings ?? new bookingbasetestsettings();
         $this->numberofusers = $numberofusers;
-        $this->numberofbookings = $numberofbookings;
+        $this->numberofbookingoptions = $numberofbookingoptions;
         $this->numberofcourses = $numberofcourses;
-        $this->numberofinstances = $numberofinstances;
+        $this->numberofbookings = $numberofbookings;
 
         $this->initialize_data();
     }
@@ -268,7 +268,7 @@ class bookingbasetest {
         $bookingcounter = 1;
 
         foreach ($this->courses as $course) {
-            for ($i = 1; $i <= $this->numberofinstances; $i++) {
+            for ($i = 1; $i <= $this->numberofbookings; $i++) {
                 $record = $bookingdata;
                 $record['course'] = $course->id;
                 $record['bookingmanager'] = $this->teacher->username;
@@ -294,16 +294,16 @@ class bookingbasetest {
         $optioncounter = 1;
 
         foreach ($this->bookings as $index => $booking) {
-            $course = $this->courses[(int) floor($index / $this->numberofinstances)] ?? $this->courses[0];
-            for ($i = 1; $i <= $this->numberofbookings; $i++) {
+            $course = $this->courses[(int) floor($index / $this->numberofbookings)] ?? $this->courses[0];
+            for ($i = 1; $i <= $this->numberofbookingoptions; $i++) {
                 $record = [
                     'bookingid' => $booking->id,
                     'text' => $optiondata['text'] ?? "Option {$optioncounter}",
-                    'chooseorcreatecourse' => 1,
+                    'chooseorcreatecourse' => $optiondata['chooseorcreatecourse'] ?? 1,
                     'courseid' => $course->id,
                     'description' => $optiondata['description'] ?? "Option description {$optioncounter}",
-                    'optiondateid_0' => '0',
-                    'daystonotify_0' => '0',
+                    'optiondateid_0' => $optiondata['optiondateid_0'] ?? '0',
+                    'daystonotify_0' => $optiondata['daystonotify_0'] ?? '0',
                     'coursestarttime_0' => $optiondata['coursestarttime_0'] ?? strtotime('now + 1 day'),
                     'courseendtime_0' => $optiondata['courseendtime_0'] ?? strtotime('now + 2 day'),
                 ];

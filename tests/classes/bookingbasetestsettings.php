@@ -118,6 +118,15 @@ class bookingbasetestsettings {
     }
 
     /**
+     * Get default booking option data.
+     *
+     * @param array $optiondata
+     */
+    public function set_option_data(array $optiondata): void {
+        $this->optiondata = array_merge($this->optiondata, $optiondata);
+    }
+
+    /**
      * Get the teacher role name.
      *
      * @return string

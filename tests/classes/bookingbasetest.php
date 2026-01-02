@@ -285,32 +285,45 @@ class bookingbasetest {
     }
 
     /**
-     * Create booking options.
+     * Create a booking option.
+     *
+     * @param int $courseid
+     * @param int $bookingid
+     * @param int $optioncounter
+     * @return stdClass
+     */
+    private function create_booking_base_option(int $courseid = 0, int $bookingid = 0, $optioncounter = 1): stdClass {
+        // Get option's default settings.
+        $optiondata = $this->settings->get_option_data();
+        // Set required option settings.
+        $record = [
+            'bookingid' => $bookingid ?? $this->bookings[$bookingid]->id,
+            'text' => $optiondata['text'] ?? "Option {$optioncounter}",
+            'chooseorcreatecourse' => $optiondata['chooseorcreatecourse'] ?? 1,
+            'courseid' => $courseid ?? $this->courses[$courseid]->id,
+            'description' => $optiondata['description'] ?? "Option description {$optioncounter}",
+            // TODO: have to decide how to handle multiple dates.
+            'optiondateid_0' => $optiondata['optiondateid_0'] ?? '0',
+            'daystonotify_0' => $optiondata['daystonotify_0'] ?? '0',
+            'coursestarttime_0' => $optiondata['coursestarttime_0'] ?? strtotime('now + 1 day'),
+            'courseendtime_0' => $optiondata['courseendtime_0'] ?? strtotime('now + 2 day'),
+        ];
+        // Merge default and required settings.
+        $record = (object) array_merge($record, $optiondata);
+        return $this->plugingenerator->create_option($record);
+
+    }
+
+    /**
+     * Create an array of booking options.
      *
      * @return void
      */
     protected function create_booking_options(): void {
-        $optiondata = $this->settings->get_option_data();
-        $optioncounter = 1;
-
         foreach ($this->bookings as $index => $booking) {
             $course = $this->courses[(int) floor($index / $this->numberofbookings)] ?? $this->courses[0];
             for ($i = 1; $i <= $this->numberofbookingoptions; $i++) {
-                $record = [
-                    'bookingid' => $booking->id,
-                    'text' => $optiondata['text'] ?? "Option {$optioncounter}",
-                    'chooseorcreatecourse' => $optiondata['chooseorcreatecourse'] ?? 1,
-                    'courseid' => $course->id,
-                    'description' => $optiondata['description'] ?? "Option description {$optioncounter}",
-                    'optiondateid_0' => $optiondata['optiondateid_0'] ?? '0',
-                    'daystonotify_0' => $optiondata['daystonotify_0'] ?? '0',
-                    'coursestarttime_0' => $optiondata['coursestarttime_0'] ?? strtotime('now + 1 day'),
-                    'courseendtime_0' => $optiondata['courseendtime_0'] ?? strtotime('now + 2 day'),
-                ];
-
-                $record = (object) array_merge($record, $optiondata);
-                $this->options[] = $this->plugingenerator->create_option($record);
-                $optioncounter++;
+                $this->options[] = $this->create_booking_base_option($course->id, $booking->id, $i);
             }
         }
     }

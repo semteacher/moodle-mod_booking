@@ -77,6 +77,24 @@ class bookingbasetestsettings {
     ];
 
     /**
+     * Default teacher user data.
+     *
+     * @var array
+     */
+    protected array $teacheruserdata = [
+        'firstname' => 'Teacher',
+    ];
+
+    /**
+     * Default student user data.
+     *
+     * @var array
+     */
+    protected array $studentuserdata = [
+        'firstname' => 'Student',
+    ];
+
+    /**
      * Teacher role to use for enrolments.
      *
      * @var string
@@ -100,12 +118,30 @@ class bookingbasetestsettings {
     }
 
     /**
+     * Set course data.
+     *
+     * @param array $coursedata
+     */
+    public function set_course_data(array $coursedata): void {
+        $this->coursedata = array_merge($this->coursedata, $coursedata);
+    }
+
+    /**
      * Get default booking instance data.
      *
      * @return array
      */
     public function get_booking_data(): array {
         return $this->bookingdata;
+    }
+
+    /**
+     * Set booking instance data.
+     *
+     * @param array $bookingdata
+     */
+    public function set_booking_data(array $bookingdata): void {
+        $this->bookingdata = array_merge($this->bookingdata, $bookingdata);
     }
 
     /**
@@ -124,6 +160,24 @@ class bookingbasetestsettings {
      */
     public function set_option_data(array $optiondata): void {
         $this->optiondata = array_merge($this->optiondata, $optiondata);
+    }
+
+    /**
+     * Set data for the teacher user.
+     *
+     * @param array $userdata
+     */
+    public function set_teacher_user_data(array $userdata): void {
+        $this->teacheruserdata = array_merge($this->teacheruserdata, $userdata);
+    }
+
+    /**
+     * Set data for the student user.
+     *
+     * @param array $userdata
+     */
+    public function set_student_user_data(array $userdata): void {
+        $this->studentuserdata = array_merge($this->studentuserdata, $userdata);
     }
 
     /**
@@ -151,12 +205,12 @@ class bookingbasetestsettings {
      * @return array
      */
     public function get_teacher_user_data(int $index): array {
-        return [
+        return array_merge([
             'username' => "teacher{$index}",
             'firstname' => 'Teacher',
             'lastname' => (string) $index,
             'email' => "teacher{$index}@example.com",
-        ];
+        ], $this->teacheruserdata);
     }
 
     /**
@@ -166,11 +220,11 @@ class bookingbasetestsettings {
      * @return array
      */
     public function get_student_user_data(int $index): array {
-        return [
+        return array_merge([
             'username' => "student{$index}",
             'firstname' => 'Student',
             'lastname' => (string) $index,
             'email' => "student{$index}@example.com",
-        ];
+        ], $this->studentuserdata);
     }
 }

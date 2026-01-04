@@ -89,10 +89,12 @@ final class booking_testing_framework_test extends advanced_testcase {
 
         $this->setAdminUser();
         $basesettings = new bookingbasetestsettings();
+        $basesettings->set_booking_data(['cancancelbook' => 1]);
         $basesettings->set_option_data($bdata['options'][0]);
-        $bookingtest = new bookingbasetest($basesettings, 3, 2, 1, 1);
+        $bookingtest = new bookingbasetest($basesettings, 4, 2, 1, 1);
         $option1 = $bookingtest->returnfirstoption();
         $student1 = $bookingtest->return_student1();
+        $students = $bookingtest->return_students();
 
         $settings = singleton_service::get_instance_of_booking_option_settings($option1->id);
         // To avoid retrieving the singleton with the wrong settings, we destroy it.
@@ -101,15 +103,63 @@ final class booking_testing_framework_test extends advanced_testcase {
         // Book the first user without any problem.
         $boinfo = new bo_info($settings);
 
-        $this->setUser($student1);
+        // Check option availability if user is not logged yet.
+        require_logout();
+        [$id, $isavailable, $description] = $boinfo->is_available($settings->id, $student1->id, false);
+        $this->assertEquals(MOD_BOOKING_BO_COND_ISLOGGEDIN, $id);
+        [$id, $isavailable, $description] = $boinfo->is_available($settings->id, $student1->id, true);
+        $this->assertEquals(MOD_BOOKING_BO_COND_ISLOGGEDIN, $id);
+
+        $this->setAdminUser();
+        // Via this line, we can get the blocking condition.
+        // The true is only hardblocking, which means low blockers used to only show buttons etc. wont be shown.
         [$id, $isavailable, $description] = $boinfo->is_available($settings->id, $student1->id, true);
         $this->assertEquals(MOD_BOOKING_BO_COND_BOOKITBUTTON, $id);
+
+        // We are allowed to book.
         $result = booking_bookit::bookit('option', $settings->id, $student1->id);
         [$id, $isavailable, $description] = $boinfo->is_available($settings->id, $student1->id, true);
         $this->assertEquals(MOD_BOOKING_BO_COND_CONFIRMBOOKIT, $id);
+
+        // Now we can actually book.
         $result = booking_bookit::bookit('option', $settings->id, $student1->id);
         [$id, $isavailable, $description] = $boinfo->is_available($settings->id, $student1->id, true);
         $this->assertEquals(MOD_BOOKING_BO_COND_ALREADYBOOKED, $id);
+
+        // When we run it again, we might want to cancel.
+        $result = booking_bookit::bookit('option', $settings->id, $student1->id);
+        [$id, $isavailable, $description] = $boinfo->is_available($settings->id, $student1->id, true);
+        $this->assertEquals(MOD_BOOKING_BO_COND_CONFIRMCANCEL, $id);
+
+        // Now confirm cancel.
+        $result = booking_bookit::bookit('option', $settings->id, $student1->id);
+
+        // The result is, that we see the bookingbutton again.
+        [$id, $isavailable, $description] = $boinfo->is_available($settings->id, $student1->id, true);
+        $this->assertEquals(MOD_BOOKING_BO_COND_BOOKITBUTTON, $id);
+
+        // That was just for fun. Now we make sure the user is booked again.
+        $result = booking_bookit::bookit('option', $settings->id, $student1->id);
+        $result = booking_bookit::bookit('option', $settings->id, $student1->id);
+
+        // Now book the second user.
+        $result = booking_bookit::bookit('option', $settings->id, $students[1]->id);
+        $result = booking_bookit::bookit('option', $settings->id, $students[1]->id);
+
+        // Now, all the available places are booked. We try to book the third user.
+        $this->setUser($students[2]);
+        [$id, $isavailable, $description] = $boinfo->is_available($settings->id, $students[2]->id, false);
+        $this->assertEquals(MOD_BOOKING_BO_COND_FULLYBOOKED, $id);
+
+        // We still try to book, but no chance.
+        $result = booking_bookit::bookit('option', $settings->id, $students[2]->id);
+        [$id, $isavailable, $description] = $boinfo->is_available($settings->id, $students[2]->id, true);
+        $this->assertEquals(MOD_BOOKING_BO_COND_FULLYBOOKED, $id);
+
+        // Check for guest user too - should be "fully booked" as well.
+        $this->setGuestUser();
+        [$id, $isavailable, $description] = $boinfo->is_available($settings->id, 1, false);
+        $this->assertEquals(MOD_BOOKING_BO_COND_FULLYBOOKED, $id);
     }
 
     /**
@@ -145,6 +195,7 @@ final class booking_testing_framework_test extends advanced_testcase {
                             'text' => 'Option: in 3 days',
                             'description' => 'Will start in 3 days',
                             'chooseorcreatecourse' => 1, // Required.
+                            'maxanswers' => 2,
                             'optiondateid_0' => "0",
                             'daystonotify_0' => "0",
                             'coursestarttime_0' => strtotime('+3 days', time()),

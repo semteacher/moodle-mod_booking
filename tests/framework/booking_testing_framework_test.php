@@ -33,14 +33,15 @@ use mod_booking\singleton_service;
 use mod_booking\bo_availability\bo_info;
 use mod_booking\booking_answers\booking_answers;
 use mod_booking_generator;
-use mod_booking\local\connectedcourse;
-use local_entities\entitiesrelation_handler;
 use mod_booking\tests\bookingbasetest;
 use mod_booking\tests\bookingbasetestsettings;
-use context_system;
-use context_module;
-use core_course_category;
-use stdClass;
+use mod_booking\tests\price\bookingwithprice;
+use mod_booking\tests\price\bookingpricetestsettings;
+use local_shopping_cart\shopping_cart;
+use local_shopping_cart\shopping_cart_history;
+use mod_booking\price;
+use local_shopping_cart\output\shoppingcart_history_list;
+
 use tool_mocktesttime\time_mock;
 
 /**
@@ -160,6 +161,80 @@ final class booking_testing_framework_test extends advanced_testcase {
         $this->setGuestUser();
         [$id, $isavailable, $description] = $boinfo->is_available($settings->id, 1, false);
         $this->assertEquals(MOD_BOOKING_BO_COND_FULLYBOOKED, $id);
+    }
+
+    /**
+     * Test of booking option with price as well as cancellation by user.
+     *
+     * @covers \mod_booking\bo_availability\conditions\priceisset::is_available
+     *
+     * @param array $bdata
+     * @throws \coding_exception
+     * @throws \dml_exception
+     *
+     * @dataProvider booking_common_settings_provider
+     *
+     */
+    public function test_booking_bookit_with_price_and_cancellation(array $bdata): void {
+        // Set parems requred for cancellation.
+        $this->setAdminUser();
+        if (class_exists('local_shopping_cart\shopping_cart')) {
+            set_config('cancelationfee', 0, 'local_shopping_cart');
+        }
+        $basesettings = new bookingpricetestsettings();
+        $basesettings->set_booking_data(['cancancelbook' => 1]);
+        $basesettings->set_option_data($bdata['options'][0]);
+        $bookingtest = new bookingwithprice($basesettings, 4, 2, 1, 1);
+        $option1 = $bookingtest->returnfirstoption();
+        $student1 = $bookingtest->return_student1();
+        $pricecategorydata = $bookingtest->return_pricecategory1();
+
+        $settings = singleton_service::get_instance_of_booking_option_settings($option1->id);
+        // To avoid retrieving the singleton with the wrong settings, we destroy it.
+        singleton_service::destroy_booking_singleton_by_cmid($settings->cmid);
+
+        $option = singleton_service::get_instance_of_booking_option($settings->cmid, $settings->id);
+        // Book the first user without any problem.
+        $boinfo = new bo_info($settings);
+        // Verify price.
+        $price = price::get_price('option', $settings->id);
+        // Default price expected.
+        $this->assertEquals($pricecategorydata->defaultvalue, $price["price"]);
+
+        // Purchase option for user.
+        $bookingtest->purchase_option_for_user($student1, $settings->id);
+
+        // In this test, we book the user directly (we don't test the payment process).
+        $option->user_submit_response($student1, 0, 0, 0, MOD_BOOKING_VERIFIED);
+
+        // User 1 should be booked now.
+        [$id, $isavailable, $description] = $boinfo->is_available($settings->id, $student1->id, true);
+        $this->assertEquals(MOD_BOOKING_BO_COND_ALREADYBOOKED, $id);
+
+        // The student1 attempt to camcel purchase by himself.
+        $this->setUser($student1);
+
+        [$id, $isavailable, $description] = $boinfo->is_available($settings->id, $student1->id, true);
+        $this->assertEquals(MOD_BOOKING_BO_COND_ALREADYBOOKED, $id);
+        // Render to see if "cancel purchase" present.
+        $buttons = booking_bookit::render_bookit_button($settings, $student1->id);
+        $this->assertStringContainsString('Cancel purchase', $buttons);
+        // Cancellation of purcahse if shopping_cart installed.
+        if (class_exists('local_shopping_cart\shopping_cart')) {
+            // Getting history of purchased item and verify.
+            $item = shopping_cart_history::get_most_recent_historyitem('mod_booking', 'option', $settings->id, $student1->id);
+            shopping_cart::add_quota_consumed_to_item($item, $student1->id);
+            shoppingcart_history_list::add_round_config($item);
+            $this->assertEquals($settings->id, $item->itemid);
+            $this->assertEquals($student1->id, $item->userid);
+            $this->assertEquals($pricecategorydata->defaultvalue, (int) $item->price);
+            $this->assertEquals(0, $item->quotaconsumed);
+            // Actual cancellation of purcahse and verify.
+            $res = shopping_cart::cancel_purchase($settings->id, 'option', $student1->id, 'mod_booking', $item->id, 0);
+            $this->assertEquals(1, $res['success']);
+            $this->assertEquals($pricecategorydata->defaultvalue, $res['credit']);
+            $this->assertEmpty($res['error']);
+        }        
     }
 
     /**

@@ -92,6 +92,32 @@ class mod_booking_generator extends testing_module_generator {
      *
      */
     public function teardown() {
+        // Cache.
+        cache_helper::purge_by_event('setbackbookinginstances');
+        cache_helper::purge_by_event('setbackprices');
+        cache_helper::purge_by_event('setbackpricecategories');
+        cache_helper::purge_by_event('setbackcachedteachersjournal');
+        cache_helper::purge_by_event('setbackmyoptionstable');
+        cache_helper::purge_by_event('setbackmyencodedtables');
+        cache_helper::purge_by_event('setbackoptionsettings');
+        cache_helper::purge_by_event('setbackoptionsanswers');
+        cache_helper::purge_by_event('setbacksessionanswers');
+        cache_helper::purge_by_event('setbacksessionanswers');
+        cache_helper::purge_by_event('setbackoptionstable');
+        cache_helper::purge_by_event('setbackeventlogtable');
+        cache_helper::purge_by_event('setbacksemesters');
+        cache_helper::purge_by_event('setbackencodedtables');
+        cache_helper::purge_by_event('setbackencodedtables');
+        cache_helper::purge_by_event('setbackbookedusertable');
+        cache_helper::purge_by_event('setbacksubbookingforms');
+        cache_helper::purge_by_event('setbackconditionforms');
+        cache_helper::purge_by_event('setbackconfirms');
+        cache_helper::purge_by_event('setbackelectivelist');
+        cache_helper::purge_by_event('setbackbookinghistorytable');
+        cache_helper::purge_by_event('setbackusercompetenciescache');
+        cache_helper::purge_by_event('setbackcompetenciesshortnamescache');
+        cache_helper::purge_by_event('setbackscheduledmailscache');
+        cache_helper::purge_by_event('setbackcustomfields');
         // Booking.
         cache_helper::purge_all();
         singleton_service::destroy_instance();

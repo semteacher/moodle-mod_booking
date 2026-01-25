@@ -93,6 +93,27 @@ class mod_booking_generator extends testing_module_generator {
      */
     public function teardown() {
         // Cache.
+        cache_helper::purge_by_definition('mod_booking', 'cachedbookinginstances');
+        cache_helper::purge_by_definition('mod_booking', 'cachedprices');
+        cache_helper::purge_by_definition('mod_booking', 'cachedpricecategories');
+        cache_helper::purge_by_definition('mod_booking', 'cachedsemesters');
+        cache_helper::purge_by_definition('mod_booking', 'cachedteachersjournal');
+        cache_helper::purge_by_definition('mod_booking', 'bookingoptionstable');
+        cache_helper::purge_by_definition('mod_booking', 'mybookingoptionstable');
+        cache_helper::purge_by_definition('mod_booking', 'bookingoptionsettings');
+        cache_helper::purge_by_definition('mod_booking', 'bookinghistorytable');
+        cache_helper::purge_by_definition('mod_booking', 'bookingoptionsanswers');
+        cache_helper::purge_by_definition('mod_booking', 'bookinganswers');
+        cache_helper::purge_by_definition('mod_booking', 'bookedusertable');
+        cache_helper::purge_by_definition('mod_booking', 'subbookingforms');
+        cache_helper::purge_by_definition('mod_booking', 'conditionforms');
+        cache_helper::purge_by_definition('mod_booking', 'confirmbooking');
+        cache_helper::purge_by_definition('mod_booking', 'usercompetenciescache');
+        cache_helper::purge_by_definition('mod_booking', 'competenciesshortnamescache');
+        cache_helper::purge_by_definition('mod_booking', 'scheduledmailscache');
+        cache_helper::purge_by_definition('mod_booking', 'customfields');
+        cache_helper::purge_by_definition('mod_booking', 'eventlogtable');
+
         cache_helper::purge_by_event('setbackbookinginstances');
         cache_helper::purge_by_event('setbackprices');
         cache_helper::purge_by_event('setbackpricecategories');

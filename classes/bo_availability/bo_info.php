@@ -492,7 +492,7 @@ class bo_info {
             }
         }
         // This will be saved in the table booking_options in the 'availability' field.
-        $fromform->availability = json_encode($arrayforjson);
+        $fromform->availability = !empty($arrayforjson) ? json_encode($arrayforjson) : null;
         $fromform->sqlfilter = $sqlfilter;
         // Without an optionid we do nothing.
     }

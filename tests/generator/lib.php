@@ -75,12 +75,20 @@ class mod_booking_generator extends testing_module_generator {
     protected $bookingoptions = 0;
 
     /**
+     * [Description for $bookings]
+     *
+     * @var array
+     */
+    protected $bookings = [];
+
+    /**
      * To be called from data reset code only, do not use in tests.
      *
      * @return void
      */
     public function reset() {
         $this->bookingoptions = 0;
+        $this->bookings = [];
 
         parent::reset();
     }
@@ -93,52 +101,46 @@ class mod_booking_generator extends testing_module_generator {
      */
     public function teardown() {
         // Cache.
-        cache_helper::purge_by_definition('mod_booking', 'cachedbookinginstances');
-        cache_helper::purge_by_definition('mod_booking', 'cachedprices');
-        cache_helper::purge_by_definition('mod_booking', 'cachedpricecategories');
-        cache_helper::purge_by_definition('mod_booking', 'cachedsemesters');
-        cache_helper::purge_by_definition('mod_booking', 'cachedteachersjournal');
-        cache_helper::purge_by_definition('mod_booking', 'bookingoptionstable');
-        cache_helper::purge_by_definition('mod_booking', 'mybookingoptionstable');
-        cache_helper::purge_by_definition('mod_booking', 'bookingoptionsettings');
-        cache_helper::purge_by_definition('mod_booking', 'bookinghistorytable');
-        cache_helper::purge_by_definition('mod_booking', 'bookingoptionsanswers');
-        cache_helper::purge_by_definition('mod_booking', 'bookinganswers');
-        cache_helper::purge_by_definition('mod_booking', 'bookedusertable');
-        cache_helper::purge_by_definition('mod_booking', 'subbookingforms');
-        cache_helper::purge_by_definition('mod_booking', 'conditionforms');
-        cache_helper::purge_by_definition('mod_booking', 'confirmbooking');
-        cache_helper::purge_by_definition('mod_booking', 'usercompetenciescache');
-        cache_helper::purge_by_definition('mod_booking', 'competenciesshortnamescache');
-        cache_helper::purge_by_definition('mod_booking', 'scheduledmailscache');
-        cache_helper::purge_by_definition('mod_booking', 'customfields');
-        cache_helper::purge_by_definition('mod_booking', 'eventlogtable');
+        foreach ($this->bookings as $booking) {
+            $cm = get_coursemodule_from_instance('booking', $booking->id);
+            $nookingobj = singleton_service::get_instance_of_booking_by_bookingid($booking->id);
+            $options = $nookingobj->get_all_options();
+            foreach ($options as $option) {
+                booking_option::purge_cache_for_option($option->id);
+            }
+            booking::purge_cache_for_booking_instance_by_cmid($cm->id, true, true);
+        }
 
-        cache_helper::purge_by_event('setbackbookinginstances');
-        cache_helper::purge_by_event('setbackprices');
-        cache_helper::purge_by_event('setbackpricecategories');
-        cache_helper::purge_by_event('setbackcachedteachersjournal');
-        cache_helper::purge_by_event('setbackmyoptionstable');
-        cache_helper::purge_by_event('setbackmyencodedtables');
-        cache_helper::purge_by_event('setbackoptionsettings');
-        cache_helper::purge_by_event('setbackoptionsanswers');
-        cache_helper::purge_by_event('setbacksessionanswers');
-        cache_helper::purge_by_event('setbacksessionanswers');
-        cache_helper::purge_by_event('setbackoptionstable');
-        cache_helper::purge_by_event('setbackeventlogtable');
-        cache_helper::purge_by_event('setbacksemesters');
-        cache_helper::purge_by_event('setbackencodedtables');
-        cache_helper::purge_by_event('setbackencodedtables');
-        cache_helper::purge_by_event('setbackbookedusertable');
-        cache_helper::purge_by_event('setbacksubbookingforms');
-        cache_helper::purge_by_event('setbackconditionforms');
-        cache_helper::purge_by_event('setbackconfirms');
-        cache_helper::purge_by_event('setbackelectivelist');
-        cache_helper::purge_by_event('setbackbookinghistorytable');
-        cache_helper::purge_by_event('setbackusercompetenciescache');
-        cache_helper::purge_by_event('setbackcompetenciesshortnamescache');
-        cache_helper::purge_by_event('setbackscheduledmailscache');
-        cache_helper::purge_by_event('setbackcustomfields');
+        $bookingcaches = [
+            'cachedbookinginstances',
+            'cachedprices',
+            'cachedpricecategories',
+            'cachedsemesters',
+            'cachedteachersjournal',
+            'bookingoptionstable',
+            'mybookingoptionstable',
+            'bookingoptionsettings',
+            'bookingoptionsanswers',
+            'bookinganswers',
+            'bookedusertable',
+            'subbookingforms',
+            'conditionforms',
+            'confirmbooking',
+            'electivebookingorder',
+            'customformuserdata',
+            'eventlogtable',
+            'bookinghistorytable',
+            'bookforuser',
+            'usercompetenciescache',
+            'competenciesshortnamescache',
+            'scheduledmailscache',
+            'customfields',
+        ];
+
+        foreach ($bookingcaches as $bookingcache) {
+            cache_helper::purge_by_definition('mod_booking', $bookingcache);
+        }
+
         // Booking.
         cache_helper::purge_all();
         singleton_service::destroy_instance();
@@ -235,7 +237,9 @@ class mod_booking_generator extends testing_module_generator {
             }
         }
 
-        return parent::create_instance($record, $options);
+        $booking = parent::create_instance($record, $options);
+        $this->bookings[] = $booking;
+        return $booking;
     }
 
     /**

@@ -234,7 +234,7 @@ class booking_option_settings {
     public $dayofweek = null;
 
     /** @var string $availability in json format */
-    public $availability = null;
+    public $availability = "[]";
 
     /** @var int $status like 1 for cancelled */
     public $status = null;

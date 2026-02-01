@@ -107,6 +107,7 @@ final class teachers_calendar_test extends advanced_testcase {
         $record->courseid = $course->id;
         $record->useprice = 0;
         $record->default = 0;
+        $record->invisible = MOD_BOOKING_OPTION_VISIBLE;
         $record->optiondateid_1 = "0";
         $record->daystonotify_1 = "0";
         $record->coursestarttime_1 = strtotime('20 May 2050 15:00');
@@ -129,22 +130,31 @@ final class teachers_calendar_test extends advanced_testcase {
                 AND e.component LIKE 'mod_booking'
                 AND e.eventtype LIKE 'user'";
         $params['userid'] = (int)$teacher1->id;
+
         $calendarevents = $DB->get_records_sql($sql, $params);
+        $this->assertCount(2, $calendarevents, 'Visible option: there should be 2 calendar events for the teacher1.');
 
-        $this->assertCount(2, $calendarevents, 'There should be 2 calendar events for the teacher.');
-
-        // Now we change the teacher and add another optiondate.
+        // Prepare for updating the option.
         $settings = singleton_service::get_instance_of_booking_option_settings($option->id);
-
         $record = (object)[
             'identifier' => $settings->identifier,
             'id' => $option->id,
             'cmid' => $settings->cmid,
         ];
         fields_info::set_data($record);
-
         unset($record->importing);
+
+        // Now we change visibility of the option to invisible.
+        $record->invisible = MOD_BOOKING_OPTION_INVISIBLE;
+        booking_option::update($record);
+        $settings = singleton_service::get_instance_of_booking_option_settings($option->id);
+        $calendarevents = $DB->get_records_sql($sql, $params);
+        $this->assertCount(0, $calendarevents, 'Invisible option: there should be 0 calendar events for teacher1.');
+
+        // Now we change the optiondae, the teacher and add another optiondate. Option is still invisible - so - no messages.
         unset($record->teacheremail);
+        $record->coursestarttime_2 = strtotime('21 May 2050 17:00');
+        $record->courseendtime_2 = strtotime('21 May 2050 18:00');
         $record->optiondateid_3 = "0";
         $record->daystonotify_3 = "0";
         $record->coursestarttime_3 = strtotime('22 May 2050 15:00');
@@ -154,17 +164,19 @@ final class teachers_calendar_test extends advanced_testcase {
 
         $params['userid'] = (int)$teacher1->id;
         $calendarevents = $DB->get_records_sql($sql, $params);
-        $this->assertCount(0, $calendarevents, 'There should now be no calendar events for teacher1 anymore.');
-
+        $this->assertCount(0, $calendarevents, 'Invisible option: there should now be no calendar events for teacher1.');
         $params['userid'] = (int)$teacher2->id;
         $calendarevents = $DB->get_records_sql($sql, $params);
-        $this->assertCount(3, $calendarevents, 'There should be 3 calendar events for teacher2.');
+        $this->assertCount(0, $calendarevents, 'Invisible option: there should be 0 calendar events for teacher2.');
 
-        // To avoid retrieving the singleton with the wrong settings, we destroy it.
-        singleton_service::destroy_booking_singleton_by_cmid($settings->cmid);
-
-        // TearDown at the very end.
-        self::tearDown();
+        // Now we change visibility of the option to visible again and re-validate events.
+        $record->invisible = MOD_BOOKING_OPTION_VISIBLE;
+        booking_option::update($record);
+        $calendarevents = $DB->get_records_sql($sql, $params);
+        $this->assertCount(0, $calendarevents, 'Visible option: there should now be no calendar events for teacher1 anymore.');
+        $params['userid'] = (int)$teacher2->id;
+        $calendarevents = $DB->get_records_sql($sql, $params);
+        $this->assertCount(2, $calendarevents, 'Visible option: there should be 2 calendar events for teacher2.');
     }
 
     /**

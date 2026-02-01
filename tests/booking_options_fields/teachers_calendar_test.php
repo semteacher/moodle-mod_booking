@@ -46,6 +46,8 @@ require_once("$CFG->dirroot/mod/booking/classes/price.php");
  * @copyright 2025 Wunderbyte GmbH <info@wunderbyte.at>
  * @author 2025 Bernhard Fischer-Sengseis
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @runTestsInSeparateProcesses
  */
 final class teachers_calendar_test extends advanced_testcase {
     /**
@@ -74,10 +76,15 @@ final class teachers_calendar_test extends advanced_testcase {
      *
      * @covers \mod_booking\option\fields\teachers::changes_collected_action
      *
+     * @dataProvider rule_option_and_event_visibility_for_teacher_provider
+     *
+     * @param array $data describes the type of change to the option
+     * @param array $expected expected traces for messages sent vs prevented
+     *
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    public function test_create_teacher_calendar_events(): void {
+    public function test_create_teacher_calendar_events(array $data, array $expected): void {
         global $DB;
         $bdata = self::provide_bdata();
 
@@ -88,6 +95,10 @@ final class teachers_calendar_test extends advanced_testcase {
         $teacher1 = $this->getDataGenerator()->create_user();
         $teacher2 = $this->getDataGenerator()->create_user();
         $teacher3 = $this->getDataGenerator()->create_user();
+
+        $this->getDataGenerator()->enrol_user($teacher1->id, $course->id, 'editingteacher');
+        $this->getDataGenerator()->enrol_user($teacher2->id, $course->id, 'editingteacher');
+        $this->getDataGenerator()->enrol_user($teacher3->id, $course->id, 'editingteacher');
         $bookingmanager = $this->getDataGenerator()->create_user(); // Booking manager.
 
         $bdata['course'] = $course->id;
@@ -116,6 +127,8 @@ final class teachers_calendar_test extends advanced_testcase {
         $record->coursestarttime_2 = strtotime('21 May 2050 15:00');
         $record->courseendtime_2 = strtotime('21 May 2050 16:00');
         $record->teacheremail = $teacher1->email;
+        $record->invisible = ($data['optionsettings'][0]['invisible']) ?? MOD_BOOKING_OPTION_VISIBLE;
+        $record->addtocalendar = ($data['optionsettings'][0]['addtocalendar']) ?? 0;
 
         // Create the booking option.
         /** @var mod_booking_generator $plugingenerator */
@@ -126,14 +139,20 @@ final class teachers_calendar_test extends advanced_testcase {
         $sql = "SELECT * FROM {event} e
                 WHERE e.name LIKE 'Testoption'
                 AND e.userid = :userid
+                AND e.visible = :visible
                 AND e.component LIKE 'mod_booking'
                 AND e.eventtype LIKE 'user'";
         $params['userid'] = (int)$teacher1->id;
+        $params['visible'] = 1;
         $calendarevents = $DB->get_records_sql($sql, $params);
 
-        $this->assertCount(2, $calendarevents, 'There should be 2 calendar events for the teacher.');
+        $this->assertCount(
+            $expected['teacher1oncreate'],
+            $calendarevents,
+            'There should be ' . $expected['teacher1oncreate'] . ' calendar events for the teacher.'
+        );
 
-        // Now we change the teacher and add another optiondate.
+        // Now we change the teacher and update one add another optiondate.
         $settings = singleton_service::get_instance_of_booking_option_settings($option->id);
 
         $record = (object)[
@@ -145,6 +164,8 @@ final class teachers_calendar_test extends advanced_testcase {
 
         unset($record->importing);
         unset($record->teacheremail);
+        $record->coursestarttime_2 = strtotime('21 May 2050 17:00');
+        $record->courseendtime_2 = strtotime('21 May 2050 18:00');
         $record->optiondateid_3 = "0";
         $record->daystonotify_3 = "0";
         $record->coursestarttime_3 = strtotime('22 May 2050 15:00');
@@ -154,17 +175,75 @@ final class teachers_calendar_test extends advanced_testcase {
 
         $params['userid'] = (int)$teacher1->id;
         $calendarevents = $DB->get_records_sql($sql, $params);
-        $this->assertCount(0, $calendarevents, 'There should now be no calendar events for teacher1 anymore.');
+        $this->assertCount(
+            $expected['teacher1onupdate'],
+            $calendarevents,
+            'There should now be ' . $expected['teacher1onupdate'] . ' calendar events for teacher1.'
+        );
 
         $params['userid'] = (int)$teacher2->id;
         $calendarevents = $DB->get_records_sql($sql, $params);
-        $this->assertCount(3, $calendarevents, 'There should be 3 calendar events for teacher2.');
+        $this->assertCount(
+            $expected['teacher2onupdate'],
+            $calendarevents,
+            'There should be ' . $expected['teacher2onupdate'] . ' calendar events for teacher2.'
+        );
+    }
 
-        // To avoid retrieving the singleton with the wrong settings, we destroy it.
-        singleton_service::destroy_booking_singleton_by_cmid($settings->cmid);
-
-        // TearDown at the very end.
-        self::tearDown();
+    /**
+     * Data provider for test_rule_on_answer_and_option_cancelled.
+     *
+     * @return array
+     * @throws \UnexpectedValueException
+     */
+    public static function rule_option_and_event_visibility_for_teacher_provider(): array {
+        return [
+            'Check events oncreate and onupdate when option is visible (invisible=0, addtocalendar=0, 2-0-3 messages)' => [
+                [
+                    'optionsettings' => [
+                        [
+                            'addtocalendar' => 0, // Do not add to calendar.
+                            'invisible' => MOD_BOOKING_OPTION_VISIBLE,
+                        ],
+                    ],
+                ],
+                [
+                    'teacher1oncreate' => 2,
+                    'teacher1onupdate' => 0,
+                    'teacher2onupdate' => 3,
+                ],
+            ],
+            'Check events oncreate and onupdate when option is invisible (invisible=0, addtocalendar=0, 2-0-3 messages)' => [
+                [
+                    'optionsettings' => [
+                        [
+                            'addtocalendar' => 0, // Do not add to calendar.
+                            'invisible' => MOD_BOOKING_OPTION_INVISIBLE,
+                        ],
+                    ],
+                ],
+                [
+                    'teacher1oncreate' => 0,
+                    'teacher1onupdate' => 0,
+                    'teacher2onupdate' => 0,
+                ],
+            ],
+            'Check events for all oncreate and onupdate when option is visible (invisible=0, addtocalendar=1, 2-3-3 messages)' => [
+                [
+                    'optionsettings' => [
+                        [
+                            'addtocalendar' => 1, // Do not add to calendar.
+                            'invisible' => MOD_BOOKING_OPTION_VISIBLE,
+                        ],
+                    ],
+                ],
+                [
+                    'teacher1oncreate' => 2,
+                    'teacher1onupdate' => 3,
+                    'teacher2onupdate' => 3,
+                ],
+            ],
+        ];
     }
 
     /**

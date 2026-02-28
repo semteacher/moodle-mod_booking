@@ -164,13 +164,13 @@ final class waitinglist_rule_cofirm_cancel_test extends advanced_testcase {
 
         // Create booking rule for confirmation from waitinglist.
         $actstr = '{"sendical":0,"sendicalcreateorcancel":"",';
-        $actstr .= '"subject":"subject1","template":"Hello","templateformat":"1"}';
+        $actstr .= '"subject":"subject1","template":"You are confirmed","templateformat":"1"}';
         $boevent = '"boevent":"\\\\mod_booking\\\\event\\\\bookinganswer_movedupfromwaitinglist"';
         $ruledata = [
-            'name' => 'notifystudent',
-            'conditionname' => 'select_user_from_event',
+            'name' => 'confirm from waitinglist',
+            'conditionname' => 'select_student_in_bo',
             'contextid' => 1,
-            'conditiondata' => '{"userfromeventtype":"relateduserid"}',
+            'conditiondata' => '{"borole":"1"}',
             'actionname' => 'send_mail',
             'actiondata' => $actstr,
             'rulename' => 'rule_react_on_event',
@@ -308,13 +308,23 @@ final class waitinglist_rule_cofirm_cancel_test extends advanced_testcase {
             $this->assertEmpty($res['error']);
         }
 
+        // Now take student 1 from the list, for a place to free up.
+        $option->user_delete_response($student[1]->id);
+        singleton_service::destroy_booking_option_singleton($option->id);
+        singleton_service::destroy_booking_answers($option->id);
+
+        // Execute tasks, get messages and validate it.
+        $this->setAdminUser();
+
+        // Get messages.
+        $messages = \core\task\manager::get_adhoc_tasks('\mod_booking\task\send_mail_by_rule_adhoc');
         // Check if answer of student 1 is really deleted.
         $answer = $DB->get_record('booking_answers', ['userid' => $student[1]->id]);
         $this->assertNotEmpty($answer);
         $this->assertEquals(MOD_BOOKING_STATUSPARAM_DELETED, $answer->waitinglist);
 
         // Now the mamgaer confirms the answer of the student 3.
-        $this->setAdminUser();
+        //$this->setAdminUser();
         // Two users has to be on waitinglist.
         $answers = singleton_service::get_instance_of_booking_answers($settings);
         $bookedusers = $answers->get_usersonlist();

@@ -580,6 +580,26 @@ final class rules_waitinglist_notification_test extends advanced_testcase {
         }
         $this->assertCount($data['mailssend'], $messages, 'wrong number of messages send');
 
+        // Proceed with the case of optiob cancellation (LMS-633_GmbH-1302).
+        if ($data['szenario'] == 'firstuserbookedinstantlycanceloption') {
+            // Cancel booking option.
+            booking_option::cancelbookingoption($option->id, '', false, $userids);
+
+            // Debug: just in case - repeat task execution on interval.
+            time_mock::set_mock_time(strtotime('+30 hour', time()));
+            $time1 = time_mock::get_mock_time();
+            ob_start();
+            $plugingenerator->runtaskswithintime($time1);
+            $plugingenerator->runtaskswithintime($time1);
+            $messages = $sink->get_messages();
+            $res = ob_get_clean(); // Not used here, but needed to clear buffer.
+
+            //TODO: should not be booked answers?
+            $answers = singleton_service::get_instance_of_booking_answers($settings);
+            $bookedusers = $answers->get_usersonlist();
+            $historyrecords = $DB->get_records('booking_history');
+        }
+
         // Proceed with the case of manual confirmation.
         if ($data['szenario'] != 'nouserbookedmanualconfirmation') {
             return;
@@ -618,6 +638,17 @@ final class rules_waitinglist_notification_test extends advanced_testcase {
      */
     public static function interval_confirmation_provider(): array {
         return [
+            'first user on waitinglist no price, book instantly, cancel option' => [
+                [
+                    'szenario' => 'firstuserbookedinstantlycanceloption',
+                    'studentprice' => 0,
+                    'executealltasks' => true,
+                    'numberoftasksexecuted' => 2,
+                    'studentexpectedtobebooked' => true,
+                    'nstudentbooked' => 2,
+                    'mailssend' => 0, // Because condition doesn't apply anymore, no free seats as user was booked immediatly.
+                ],
+            ],
             'first user on waitinglist no price, book instantly' => [
                 [
                     'szenario' => 'firstuserbookedinstantly',

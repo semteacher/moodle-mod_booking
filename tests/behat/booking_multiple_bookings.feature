@@ -98,7 +98,11 @@ Feature: In a booking instance with multiple bookings enabled
     And I should not see "Book again" in the ".allbookingoptionstable_r1 .booknow" "css_element"
     And I reload the page
     And I wait until the page is ready
+    And I reload the page
     And I should see "Book again (already booked 1 time)" in the ".allbookingoptionstable_r1" "css_element"
+    And I click on "Book again (already booked 1 time)" "text" in the ".allbookingoptionstable_r1 .booknow" "css_element"
+    And I click on "Click again to confirm booking" "text" in the ".allbookingoptionstable_r1" "css_element"
+    And I should see "Start" in the ".allbookingoptionstable_r1" "css_element"
 
   @javascript
   Scenario: Multiple bookings enabled: different students can each book multiple times

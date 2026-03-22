@@ -109,11 +109,14 @@ class bo_info {
      * This function displays debugging() messages if the availability
      * information is invalid.
      *
-     * @param ?int $optionid
-     * @param int $userid If set, specifies a different user ID to check availability for
+     * @param int|null $optionid
+     * @param int $userid
      * @param bool $hardblock
      * @param bool $noblockingpages
-     * @return array [isavailable, description]
+     * @param array $ignoredconditionids
+     *
+     * @return array
+     *
      */
     public function is_available(
         ?int $optionid = null,

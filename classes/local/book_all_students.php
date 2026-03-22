@@ -243,7 +243,11 @@ class book_all_students {
      *
      * @param booking_option_settings $settings
      * @param int $userid
+     * @param array $selectedkeys
+     * @param array $debug
+     *
      * @return bool
+     *
      */
     private static function prepare_slot_selection_for_user(
         booking_option_settings $settings,

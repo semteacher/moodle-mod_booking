@@ -930,6 +930,7 @@ class dates {
      * @param array $elements
      * @param array $dates
      * @param array $formdata
+     * @param bool $allowoptiondates
      *
      * @return void
      *

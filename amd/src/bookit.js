@@ -209,6 +209,13 @@ export const initbookitbutton = () => {
         container.dataset.bookitCancelCaptureDelegated = 'true';
 
         window.addEventListener('click', (e) => {
+
+            const cancelTarget = e.target.closest('.shopping-cart-cancel-button');
+            if (cancelTarget) {
+                // We leaave work to the shopping cart implementation.
+                return;
+            }
+
             const cancelButton = e.target.closest('.bo-cancel-button');
             if (!cancelButton) {
                 return;
@@ -239,7 +246,6 @@ export const initbookitbutton = () => {
         container.addEventListener('click', (e) => {
 
             const cancelButton = e.target.closest('.bo-cancel-button');
-            const iscancel = !!cancelButton;
 
             const button = e.target.closest(SELECTORS.BOOKITBUTTON + '[data-itemid][data-area]');
             if (!button) {
@@ -248,6 +254,8 @@ export const initbookitbutton = () => {
 
             const cancelTarget = e.target.closest('.shopping-cart-cancel-button');
             const bookTarget = e.target.closest('.btn');
+
+            const iscancel = !!(cancelButton || cancelTarget);
 
             // Ignore disabled buttons
             if (button.classList.contains('disabled')) {
@@ -264,11 +272,6 @@ export const initbookitbutton = () => {
 
             const {itemid, area, userid} = button.dataset;
 
-            if (iscancel) {
-                // Handled in capture phase to beat bootstrap's modal data-api listeners.
-                return;
-            }
-
             if (cancelTarget) {
                 import('local_shopping_cart/shistory')
                     .then(shoppingcart => {
@@ -280,6 +283,12 @@ export const initbookitbutton = () => {
                         console.error(err);
                     });
             } else if (bookTarget) {
+
+                if (iscancel) {
+                    // Handled in capture phase to beat bootstrap's modal data-api listeners.
+                    return;
+                }
+
                 if (!bookTarget.href || bookTarget.href.length < 2) {
                     bookit(itemid, area, userid, button.dataset);
                 }
@@ -496,6 +505,11 @@ export const initprepagemodal = (optionid, userid, totalnumberofpages, uniquid) 
  * @param {string} uniquid
  */
 export const initprepageinline = (optionid, userid, totalnumberofpages, uniquid) => {
+
+    const isinlineprepage = document.querySelector('.inlineprepagearea');
+    if (!isinlineprepage) {
+        return;
+    }
 
     // eslint-disable-next-line no-console
     console.log('initprepageinline', optionid, userid, totalnumberofpages, uniquid);

@@ -131,7 +131,9 @@ class enrolmentstatus extends field_base {
         $mform->setType('enrolmentstatus', PARAM_INT);
         $mform->setDefault('enrolmentstatus', 2);
         $mform->addHelpButton('enrolmentstatus', 'enrolmentstatus', 'mod_booking');
-        $mform->hideIf('enrolmentstatus', 'selflearningcourse', 'eq', 1);
+        if ($mform->elementExists('selflearningcourse')) {
+            $mform->hideIf('enrolmentstatus', 'selflearningcourse', 'eq', 1);
+        }
     }
 
     /**

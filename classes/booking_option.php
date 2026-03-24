@@ -1308,7 +1308,7 @@ class booking_option {
                         !$updateansweronimport
                         && $waitinglist == MOD_BOOKING_STATUSPARAM_BOOKED
                         && (
-                            !$ismultipbookingsoptionenable 
+                            !$ismultipbookingsoptionenable
                             || $currentanswer->timemodified == $timebooked
                         )
                     ) {

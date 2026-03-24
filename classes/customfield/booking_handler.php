@@ -400,9 +400,27 @@ class booking_handler extends \core_customfield\handler {
      */
     public function instance_form_validation(array $data, array $files = []) {
 
-        $errors = parent::instance_form_validation($data, $files);
+        // We must not validate custom fields that are not shown in the form
+        // (e.g. unchecked in optionformconfig for a reduced form).
+        // The parent method validates ALL editable fields, which causes errors
+        // for fields not present in the submitted data.
+        $contextid = 0;
+        if (!empty($data['cmid'])) {
+            $contextid = \context_module::instance($data['cmid'])->id;
+        }
+        $uncheckedcustomfields = optionformconfig_info::get_unchecked_customfields($contextid);
 
-        // Currently nothing to validate.
+        $instanceid = empty($data['id']) ? 0 : $data['id'];
+        $editablefields = $this->get_editable_fields($instanceid);
+        $fields = $this->get_instance_fields_data($editablefields, $instanceid);
+        $errors = [];
+        foreach ($fields as $formfield) {
+            $shortname = $formfield->get_field()->get('shortname');
+            if (in_array($shortname, $uncheckedcustomfields)) {
+                continue;
+            }
+            $errors += $formfield->instance_form_validation($data, $files);
+        }
 
         return $errors;
     }

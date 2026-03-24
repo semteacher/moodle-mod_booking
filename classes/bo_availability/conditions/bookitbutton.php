@@ -309,7 +309,7 @@ class bookitbutton implements bo_condition {
 
         if ($isbookagainbutton) {
             // Keep override scope intentionally tiny for now.
-            $data['overrideids'] = self::get_book_intent_override_data_json();
+            $data['overrideids'] = json_encode(self::get_book_intent_override_condition_ids());
         }
 
         return [$template, $data];

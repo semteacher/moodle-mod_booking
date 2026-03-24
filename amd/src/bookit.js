@@ -204,6 +204,8 @@ export const initbookitbutton = () => {
         return;
     }
 
+    const bootstrapVersion = detectBootstrapVersion();
+
     // Intercept cancel clicks before bootstrap's document modal handlers fire.
     if (!container.dataset.bookitCancelCaptureDelegated) {
         container.dataset.bookitCancelCaptureDelegated = 'true';
@@ -242,6 +244,10 @@ export const initbookitbutton = () => {
     // Add one event listener only once
     if (!container.dataset.bookitDelegated) {
         container.dataset.bookitDelegated = 'true';
+
+        // Bootstrap 5: use bubble phase (false) to respect stopImmediatePropagation from capture phase
+        // Bootstrap 4: use capture phase (true) for proper event handling
+        const useCapture = bootstrapVersion === 5 ? false : true;
 
         container.addEventListener('click', (e) => {
 
@@ -293,7 +299,7 @@ export const initbookitbutton = () => {
                     bookit(itemid, area, userid, button.dataset);
                 }
             }
-        }, true);
+        }, useCapture);
     }
 };
 

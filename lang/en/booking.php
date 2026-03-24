@@ -822,7 +822,7 @@ $string['certificateissuedate'] = 'Issue date';
 $string['certificateissueddesc'] = 'User with ID {$a->userid} issued a certificate (ID {$a->objectid}) to user with ID {$a->relateduserid}.';
 $string['certificatemodalheader'] = 'Certificates of {$a}';
 $string['certificatenotactive'] = 'Certificate not active';
-$string['certificatenotapplyforusers'] = 'No certifactes were generated.';
+$string['certificatenotapplyforusers'] = 'No certificates were generated.';
 $string['certificateon'] = 'Activate certificate creation <span class="badge bg-success text-light"><i class="fa fa-cogs" aria-hidden="true"></i> PRO</span>';
 $string['certificateon_desc'] = 'Enable this setting if you want to issue certificates for the completion of booking options.';
 $string['certificaterequiredoptionsmode'] = 'Only one of the selected options needs to be completed';

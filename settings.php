@@ -372,6 +372,21 @@ if ($ADMIN->fulltree) {
             )
         );
 
+        // Expand or collapse all sections in the booking option form.
+        $settings->add(
+            new admin_setting_configselect(
+                'booking/editoptionformexpandallsections',
+                get_string('editoptionformexpandallsections', 'mod_booking'),
+                get_string('editoptionformexpandallsections_desc', 'mod_booking'),
+                0,
+                [
+                    0 => get_string('editoptionformexpandallsections_default', 'mod_booking'),
+                    1 => get_string('editoptionformexpandallsections_expand', 'mod_booking'),
+                    2 => get_string('editoptionformexpandallsections_collapse', 'mod_booking'),
+                ]
+            )
+        );
+
         // Choose which presence options should be vailabile.
 
         $presenceoptions = [

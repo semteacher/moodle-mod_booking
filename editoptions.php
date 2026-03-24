@@ -119,4 +119,84 @@ if (!empty($optionid)) {
 echo html_writer::div($form->render(), '', ['id' => 'editoptionsformcontainer']);
 $PAGE->requires->js_call_amd('mod_booking/dynamiceditoptionform', 'init', $params);
 
+$expandcollapsesetting = (int) get_config('booking', 'editoptionformexpandallsections');
+if ($expandcollapsesetting === 1) {
+    echo get_script_to_toggle_all_sections('expand');
+} else if ($expandcollapsesetting === 2) {
+    echo get_script_to_toggle_all_sections('collapse');
+}
+
 echo $OUTPUT->footer();
+
+/**
+ * Return a script to expand or collapse all form sections.
+ *
+ * @param string $mode 'expand' or 'collapse'
+ * @return string
+ */
+function get_script_to_toggle_all_sections(string $mode): string {
+    $isexpand = ($mode === 'expand') ? 'true' : 'false';
+    return '<script>
+    (function() {
+        var isExpand = ' . $isexpand . ';
+        if ("scrollRestoration" in history) { history.scrollRestoration = "manual"; }
+        function toggleAll() {
+            var c = document.getElementById("editoptionsformcontainer");
+            if (!c || !c.querySelector(".mform")) return;
+            if (isExpand) {
+                c.querySelectorAll(".collapse:not(.show)").forEach(function(el) {
+                    el.classList.add("show");
+                });
+                c.querySelectorAll("fieldset.collapsible.collapsed").forEach(function(el) {
+                    el.classList.remove("collapsed");
+                });
+                c.querySelectorAll(".fheader[aria-expanded=\\"false\\"]").forEach(function(el) {
+                    el.setAttribute("aria-expanded", "true");
+                    el.classList.remove("collapsed");
+                });
+            } else {
+                c.querySelectorAll(".collapse.show").forEach(function(el) {
+                    el.classList.remove("show");
+                });
+                c.querySelectorAll("fieldset.collapsible:not(.collapsed)").forEach(function(el) {
+                    el.classList.add("collapsed");
+                });
+                c.querySelectorAll(".fheader[aria-expanded=\\"true\\"]").forEach(function(el) {
+                    el.setAttribute("aria-expanded", "false");
+                    el.classList.add("collapsed");
+                });
+            }
+            var link = c.querySelector(".collapseexpand");
+            if (link) {
+                link.setAttribute("aria-expanded", isExpand ? "true" : "false");
+                if (isExpand) { link.classList.remove("collapsed"); }
+                else { link.classList.add("collapsed"); }
+            }
+            window.scrollTo(0, 0);
+        }
+        window.addEventListener("load", function() {
+            toggleAll();
+            // AMD modules init asynchronously after load.
+            // Briefly hold scroll at top to counteract their scroll changes.
+            var frames = 0;
+            (function holdTop() {
+                window.scrollTo(0, 0);
+                if (++frames < 60) { requestAnimationFrame(holdTop); }
+            })();
+        });
+        (function watch() {
+            var c = document.getElementById("editoptionsformcontainer");
+            if (!c) return setTimeout(watch, 500);
+            var cur = c.querySelector(".mform");
+            new MutationObserver(function() {
+                var nf = c.querySelector(".mform");
+                if (nf && nf !== cur) {
+                    cur = nf;
+                    setTimeout(toggleAll, 200);
+                    setTimeout(function() { window.scrollTo(0, 0); }, 400);
+                }
+            }).observe(c, {childList: true, subtree: true});
+        })();
+    })();
+    </script>';
+}

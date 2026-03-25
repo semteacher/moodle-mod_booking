@@ -24,6 +24,7 @@
 
 namespace mod_booking\table;
 use core_completion\progress;
+use mod_booking\bo_availability\conditions\alreadybooked;
 use mod_booking\booking_answers\booking_answers;
 use core_plugin_manager;
 use mod_booking\local\modechecker;
@@ -856,12 +857,13 @@ class bookingoptions_wbtable extends wunderbyte_table {
         } else {
             $context = $this->get_context();
         }
-
+        $settings = singleton_service::get_instance_of_booking_option_settings($values->id);
         // When we have this seeting, we never show the link here.
         if (
             get_config('booking', 'linktomoodlecourseonbookedbutton')
             && (!has_capability('mod/booking:updatebooking', $context)
                 && !$isteacherofthisoption)
+            && empty($settings->jsonobject->multiplebookings)
         ) {
             return '';
         }
@@ -870,10 +872,23 @@ class bookingoptions_wbtable extends wunderbyte_table {
         $status = $answersobject->user_status($USER->id);
 
         $isteacherofthisoption = booking_check_if_teacher($values);
+        // We get the user ID from the table instance.
+        // It is 0 by default but can be set, for example,
+        // when rendering booking options for a specific user via the cashier page.
+        $buyforuser = $this->foruserid;
 
+        // We need to make sure that a user is set for the rendering of the button. When it is equal to 0,
+        // we use the logged-in user. Leaving it as 0 may cause problems in the booking process,
+        // for example when a pre-form is involved.
+        if ($buyforuser == 0) {
+            $buyforuser = $USER->id;
+        }
+        $alreadybooked = new alreadybooked();
+        $isavailable = $alreadybooked->is_available($settings, $buyforuser);
         if (
             $status == MOD_BOOKING_STATUSPARAM_BOOKED
             && get_config('booking', 'linktomoodlecourseonbookedbutton')
+            && !$isavailable
         ) {
             return '';
         }

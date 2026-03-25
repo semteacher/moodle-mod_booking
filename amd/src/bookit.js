@@ -22,9 +22,9 @@
 import Ajax from 'core/ajax';
 import Templates from 'core/templates';
 import Notification from 'core/notification';
-import {reloadAllTables} from 'local_wunderbyte_table/reload';
+import { reloadAllTables } from 'local_wunderbyte_table/reload';
 
-import {closeModal, closeInline} from 'mod_booking/bookingpage/prepageFooter';
+import { closeModal, closeInline } from 'mod_booking/bookingpage/prepageFooter';
 
 var currentbookitpage = {};
 var totalbookitpages = {};
@@ -51,7 +51,7 @@ const registerPrepageModalDelegatedListener = () => {
             return;
         }
 
-              // eslint-disable-next-line no-console
+        // eslint-disable-next-line no-console
         console.log('modal shown', modal);
 
 
@@ -149,7 +149,7 @@ function respondToVisibility(optionid, userid, uniquid, totalnumberofpages, call
 
         element.dataset.initialized = true;
 
-        var observer = new MutationObserver(function() {
+        var observer = new MutationObserver(function () {
 
             if (!isHidden(element)) {
 
@@ -171,7 +171,7 @@ function respondToVisibility(optionid, userid, uniquid, totalnumberofpages, call
                     return;
                 }
 
-                observer.observe(element, {attributes: true});
+                observer.observe(element, { attributes: true });
                 element.dataset.observed = true;
                 return;
             }
@@ -222,22 +222,23 @@ export const initbookitbutton = () => {
             if (!cancelButton) {
                 return;
             }
-
             const button = cancelButton.closest(SELECTORS.BOOKITBUTTON + '[data-itemid][data-area]');
             if (!button || button.classList.contains('disabled')) {
                 return;
             }
 
-            const {itemid, area, userid} = button.dataset;
+            const { itemid, area, userid } = button.dataset;
 
             e.preventDefault();
             e.stopImmediatePropagation();
             e.stopPropagation();
 
             // Cancel actions must never carry overrideids — strip them from the payload.
-            const cancelData = {...button.dataset};
+            const cancelData = { ...button.dataset };
             delete cancelData.overrideids;
-            bookit(itemid, area, userid, cancelData);
+            // Mark if this was clicked from inside a modal
+            const inModal = !!button.closest('[id^="' + SELECTORS.MODALID + '"], [id^="' + SELECTORS.INLINEID + '"]');
+            bookit(itemid, area, userid, cancelData, inModal);
         }, true);
     }
 
@@ -276,7 +277,7 @@ export const initbookitbutton = () => {
                 return;
             }
 
-            const {itemid, area, userid} = button.dataset;
+            const { itemid, area, userid } = button.dataset;
 
             if (cancelTarget) {
                 import('local_shopping_cart/shistory')
@@ -296,7 +297,9 @@ export const initbookitbutton = () => {
                 }
 
                 if (!bookTarget.href || bookTarget.href.length < 2) {
-                    bookit(itemid, area, userid, button.dataset);
+                    const inModal = !!button.closest('[id^="' + SELECTORS.MODALID + '"], [id^="' + SELECTORS.INLINEID + '"]');
+                    const buttonData = { ...button.dataset };
+                    bookit(itemid, area, userid, buttonData, inModal);
                 }
             }
         }, useCapture);
@@ -309,11 +312,37 @@ export const initbookitbutton = () => {
  * @param {string} area
  * @param {int} userid
  * @param {object} data
+ * @param {?boolean} clickedFromModal
  */
-export function bookit(itemid, area, userid, data) {
+export function bookit(itemid, area, userid, data, clickedFromModal = null) {
 
     // eslint-disable-next-line no-console
     console.log('run bookit');
+
+    const modalSelector = '[id^="' + SELECTORS.MODALID + '"], [id^="' + SELECTORS.INLINEID + '"]';
+    let resolvedClickedFromModal = clickedFromModal;
+
+    if (typeof resolvedClickedFromModal !== 'boolean') {
+        const activeElement = document.activeElement;
+        const activeButton = activeElement?.closest(
+            SELECTORS.BOOKITBUTTON +
+            '[data-itemid=\'' + itemid + '\']' +
+            '[data-area=\'' + area + '\']'
+        );
+
+        if (activeButton) {
+            resolvedClickedFromModal = !!activeButton.closest(modalSelector);
+        } else {
+            const visibleModalButton = document.querySelector(
+                '[id^="' + SELECTORS.MODALID + '"]' +
+                '.show ' +
+                SELECTORS.BOOKITBUTTON +
+                '[data-itemid=\'' + itemid + '\']' +
+                '[data-area=\'' + area + '\']'
+            );
+            resolvedClickedFromModal = !!visibleModalButton;
+        }
+    }
 
     Ajax.call([{
         methodname: "mod_booking_bookit",
@@ -323,7 +352,7 @@ export function bookit(itemid, area, userid, data) {
             'userid': userid,
             'data': JSON.stringify(data),
         },
-        done: function(res) {
+        done: function (res) {
 
             var skipreload = false;
 
@@ -345,6 +374,16 @@ export function bookit(itemid, area, userid, data) {
 
             // We run through every button. and render the data.
             buttons.forEach(button => {
+                // Filter buttons based on whether they're in a modal context
+                const buttonInModal = !!button.closest('[id^="' + SELECTORS.MODALID + '"], [id^="' + SELECTORS.INLINEID + '"]');
+                if (resolvedClickedFromModal && !buttonInModal) {
+                    // Skip buttons outside modal when click came from modal
+                    return;
+                }
+                if (!resolvedClickedFromModal && buttonInModal) {
+                    // Skip buttons inside modal when click came from outside
+                    return;
+                }
 
                 // eslint-disable-next-line no-console
                 console.log('bookit values', button.dataset.nojs, res.status);
@@ -363,6 +402,14 @@ export function bookit(itemid, area, userid, data) {
 
                     const originalbutton = button;
 
+                    const replaceButtonNode = (targetbutton, html, js = '') => {
+                        if (!targetbutton) {
+                            return;
+                        }
+                        Templates.replaceNode(targetbutton, html, js);
+                        return;
+                    };
+
                     templates.forEach(template => {
 
                         const data = arraytoreduce.shift();
@@ -373,14 +420,19 @@ export function bookit(itemid, area, userid, data) {
                             template === "mod_booking/bookingpage/prepagemodal"
                             || template === "mod_booking/bookingpage/prepageinline"
                         ) {
-                            button = button.closest('div[data-bs-toggle="modal"]')
+                            if (resolvedClickedFromModal) {
+                                // For clicks inside modal content, update that modal button directly.
+                                button = originalbutton;
+                            } else {
+                                button = button.closest('div[data-bs-toggle="modal"]')
                                     ?? button.closest('div[data-bs-toggle="collapse"]');
+                            }
                             datatorender.uniquid = shortHash;
 
                             // eslint-disable-next-line no-console
                             console.log('button', button);
 
-                            if (button) {
+                            if (button && !resolvedClickedFromModal) {
                                 const targetmodalid = button.dataset.bsTarget?.replace('#', '');
                                 if (targetmodalid) {
                                     const targetmodal = document.getElementById(targetmodalid);
@@ -393,27 +445,50 @@ export function bookit(itemid, area, userid, data) {
                             button = originalbutton;
                         }
 
-                        const promise = Templates.renderForPromise(template, datatorender).then(({html, js}) => {
-
-                            // Here, we might need to replace the parent node instead of button.
-
-                            Templates.replaceNode(button, html, js);
-
-                            return true;
-                        }).catch(ex => {
-                            Notification.addNotification({
-                                message: 'failed rendering ' + ex,
-                                type: "danger"
+                        // For modal clicks, use buttonhtml if available; otherwise use template rendering
+                        if (resolvedClickedFromModal && datatorender.buttonhtml) {
+                            const promise = Promise.resolve().then(() => {
+                                let html = datatorender.buttonhtml;
+                                html = html.replaceAll('nojs="1"', 'nojs="0"');
+                                replaceButtonNode(button, html);
+                                return true;
+                            }).catch(ex => {
+                                Notification.addNotification({
+                                    message: 'failed rendering ' + ex,
+                                    type: "danger"
+                                });
                             });
-                        });
+                            promises.push(promise);
+                        } else {
+                            const promise = Templates.renderForPromise(template, datatorender).then(({ html, js }) => {
 
-                        promises.push(promise);
+                                // Here, we might need to replace the parent node instead of button.
+
+                                replaceButtonNode(button, html, js);
+
+                                return true;
+                            }).catch(ex => {
+                                Notification.addNotification({
+                                    message: 'failed rendering ' + ex,
+                                    type: "danger"
+                                });
+                            });
+
+                            promises.push(promise);
+                        }
                     });
                 }
             });
 
             Promise.all(promises).then(() => {
-
+                if (resolvedClickedFromModal) {
+                    buttons.forEach(button => {
+                        const buttonInModal = !!button.closest(
+                            '[id^="' + SELECTORS.MODALID + '"],[id^="' + SELECTORS.INLINEID + '"]'
+                        );
+                        buttonInModal.dataset.nojs = 0;
+                    });
+                }
                 const backdrop = document.querySelector(SELECTORS.STATICBACKDROP);
 
                 if (area === 'subbooking') {
@@ -427,7 +502,7 @@ export function bookit(itemid, area, userid, data) {
                 // eslint-disable-next-line no-console
                 console.log('skipreload', skipreload, currentbookitpage[itemid], totalbookitpages[itemid]);
 
-                if (!backdrop && !skipreload) {
+                if (!skipreload && (!backdrop || resolvedClickedFromModal)) {
                     reloadAllTables();
                 }
 
@@ -620,7 +695,7 @@ export const loadPreBookingPage = (
             'itemid': optionid,
             'userid': userid,
         },
-        done: function(response) {
+        done: function (response) {
             // Will always be 1, if shopping cart is not installed!
             if (response.success == 1
                 || response.success == 5 // Already booked, we need this for subbokings.
@@ -633,7 +708,7 @@ export const loadPreBookingPage = (
                         userid,
                         'pagenumber': currentbookitpage[optionid],
                     },
-                    done: function(res) {
+                    done: function (res) {
                         // If we are on the last page, we reset it to 0.
                         if (currentbookitpage[optionid] === totalbookitpages[optionid] - 1) {
                             currentbookitpage[optionid] = 0;
@@ -649,7 +724,7 @@ export const loadPreBookingPage = (
 
                         renderTemplatesOnPage(templates, dataarray, element);
                     },
-                    fail: function(err) {
+                    fail: function (err) {
                         // eslint-disable-next-line no-console
                         console.log(err);
                     }
@@ -675,12 +750,12 @@ export const loadPreBookingPage = (
                         // Handle any errors, including if the module doesn't exist
                         // eslint-disable-next-line no-console
                         console.log(err);
-                });
+                    });
             }
 
             return true;
         },
-        fail: function(err) {
+        fail: function (err) {
             // eslint-disable-next-line no-console
             console.log(err);
         }
@@ -746,7 +821,7 @@ async function renderTemplatesOnPage(templates, dataarray, element) {
         // eslint-disable-next-line no-console
         console.log(data.data);
 
-        await Templates.renderForPromise(template, data.data).then(({html, js}) => {
+        await Templates.renderForPromise(template, data.data).then(({ html, js }) => {
 
             if (counter < 1) {
                 counter++;

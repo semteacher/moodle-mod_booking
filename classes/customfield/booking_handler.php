@@ -55,11 +55,11 @@ class booking_handler extends \core_customfield\handler {
     protected $parentcontext;
 
     /** @var int Field is visible to everybody */
-    const MOD_BOOKING_VISIBLETOALL = 2;
+    public const MOD_BOOKING_VISIBLETOALL = 2;
     /** @var int Field is only for teachers */
-    const MOD_BOOKING_VISIBLETOTEACHERS = 1;
+    public const MOD_BOOKING_VISIBLETOTEACHERS = 1;
     /** @var int Field is not displayed  */
-    const MOD_BOOKING_NOTVISIBLE = 0;
+    public const MOD_BOOKING_NOTVISIBLE = 0;
 
     /**
      * Returns a singleton
@@ -412,7 +412,7 @@ class booking_handler extends \core_customfield\handler {
 
         $instanceid = empty($data['id']) ? 0 : $data['id'];
         $editablefields = $this->get_editable_fields($instanceid);
-        $fields = $this->get_instance_fields_data($editablefields, $instanceid);
+        $fields = api::get_instance_fields_data($editablefields, $instanceid);
         $errors = [];
         foreach ($fields as $formfield) {
             $shortname = $formfield->get_field()->get('shortname');

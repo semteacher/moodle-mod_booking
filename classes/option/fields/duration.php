@@ -216,6 +216,11 @@ class duration extends field_base {
         $mform->setType('duration', PARAM_INT);
         $mform->setDefault('duration', 2592000); // 30 days.
         $mform->hideIf('duration', 'selflearningcourse', 'neq', 1);
+
+        // Hide enrolmentstatus when selflearningcourse is enabled.
+        if ($mform->elementExists('enrolmentstatus')) {
+            $mform->hideIf('enrolmentstatus', 'selflearningcourse', 'eq', 1);
+        }
     }
 
     /**

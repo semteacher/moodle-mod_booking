@@ -4649,7 +4649,7 @@ class booking_option {
      * @return void
      *
      */
-    private static function check_if_free_to_book_again(booking_option_settings $settings, int $userid, bool $fullybooked) {
+    public static function check_if_free_to_book_again(booking_option_settings $settings, int $userid, bool $fullybooked) {
 
         global $USER;
 

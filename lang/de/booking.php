@@ -2754,6 +2754,7 @@ $string['tagtext'] = 'Schlagwort-Text';
 $string['taken'] = 'gebucht';
 $string['taskadhocresetoptiondatesforsemester'] = 'Adhoc task: Termine zurücksetzen und neu erstellen';
 $string['taskcheckanswers'] = 'Booking: Antworten prüfen';
+$string['taskcheckcampaignfreetobookagain'] = 'Booking: Prüfen ob Kampagnenstart/-ende Plätze freigemacht hat';
 $string['taskcleanbookingdb'] = 'Booking: Datenbank aufräumen';
 $string['taskconfirmbookinganswerbymailbyruleadhoc'] = 'Booking: Freischalten von Warteliste via Regel erteilen (Adhoc-Task)';
 $string['taskenrolbookeduserstocourse'] = 'Booking: Gebuchte User in Kurs einschreiben';

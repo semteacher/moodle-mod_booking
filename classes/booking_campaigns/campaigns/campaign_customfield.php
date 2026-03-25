@@ -22,6 +22,7 @@ use mod_booking\booking_option_settings;
 use mod_booking\customfield\booking_handler;
 use mod_booking\option\time_handler;
 use mod_booking\singleton_service;
+use mod_booking\task\check_campaign_freetobookagain;
 use mod_booking\task\purge_campaign_caches;
 use MoodleQuickForm;
 use stdClass;
@@ -226,12 +227,41 @@ class campaign_customfield implements booking_campaign {
         $purgetaskend->set_next_run_time($data->endtime);
         \core\task\manager::queue_adhoc_task($purgetaskend);
 
-        // If we can update, we add the id here.
-        if (isset($data->id)) {
-            $record->id = $data->id;
-            $DB->update_record('booking_campaigns', $record);
+        // If the campaign changes available places, we need to check for freetobookagain events.
+        if ((float)$data->limitfactor != 1.0) {
+            // Save the record first to get the campaign ID.
+            if (isset($data->id)) {
+                $record->id = $data->id;
+                $DB->update_record('booking_campaigns', $record);
+                $campaignid = $record->id;
+            } else {
+                $campaignid = $DB->insert_record('booking_campaigns', $record);
+                $this->id = $campaignid;
+            }
+
+            // Queue freetobookagain checks after cache purge (60s offset) at both start and end time.
+            $customdata = (object)[
+                'campaignid' => $campaignid,
+                'limitfactor' => $data->limitfactor,
+            ];
+
+            $checktaskstart = new check_campaign_freetobookagain();
+            $checktaskstart->set_custom_data($customdata);
+            $checktaskstart->set_next_run_time($data->starttime + 60);
+            \core\task\manager::queue_adhoc_task($checktaskstart);
+
+            $checktaskend = new check_campaign_freetobookagain();
+            $checktaskend->set_custom_data($customdata);
+            $checktaskend->set_next_run_time($data->endtime + 60);
+            \core\task\manager::queue_adhoc_task($checktaskend);
         } else {
-            $this->id = $DB->insert_record('booking_campaigns', $record);
+            // If we can update, we add the id here.
+            if (isset($data->id)) {
+                $record->id = $data->id;
+                $DB->update_record('booking_campaigns', $record);
+            } else {
+                $this->id = $DB->insert_record('booking_campaigns', $record);
+            }
         }
     }
 

@@ -2880,6 +2880,7 @@ $string['tagtext'] = 'Text';
 $string['taken'] = 'Taken';
 $string['taskadhocresetoptiondatesforsemester'] = 'Adhoc task: Reset and generate new optiondates for semester';
 $string['taskcheckanswers'] = 'Booking: Check answers';
+$string['taskcheckcampaignfreetobookagain'] = 'Booking: Check if campaign start/end freed up places';
 $string['taskcleanbookingdb'] = 'Booking: Clean database';
 $string['taskconfirmbookinganswerbymailbyruleadhoc'] = 'Booking: Confirm booking answer from waitinglist by mail (adhoc task)';
 $string['taskenrolbookeduserstocourse'] = 'Booking: Enrol booked users to course';

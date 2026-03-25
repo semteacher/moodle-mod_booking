@@ -263,3 +263,28 @@ Feature: Edit booking's organizer, info and semester settings as a teacher or ad
     And I log out
     And I am on the "My booking" Activity page logged in as student1
     And I should see "Booked" in the ".allbookingoptionstable_r1" "css_element"
+
+  @javascript
+  Scenario: Booking settings: validate default settings for the editoptionformexpandallsections
+    ## Validate section expanded by default
+    Given the following config values are set as admin:
+      | config                          | value | plugin  |
+      | editoptionformexpandallsections | 1     | booking |
+    And I am on the "My booking" Activity page logged in as admin
+    And I click on "Edit booking option" "icon" in the ".allbookingoptionstable_r1" "css_element"
+    ##And I wait "40" seconds
+    And I should see "Connected Moodle course"
+    And I should see "Assign teachers:"
+    And I should see "Only book with price"
+    And I should see "Booking is possible only after a certain date"
+    And I should see "Apply booking rules"
+    ## Validate section collapsed by default
+    And the following config values are set as admin:
+      | config                          | value | plugin  |
+      | editoptionformexpandallsections | 2     | booking |
+    And I reload the page
+    And I should not see "Connected Moodle course"
+    And I should not see "Assign teachers:"
+    And I should not see "Only book with price"
+    And I should not see "Booking is possible only after a certain date"
+    And I should not see "Apply booking rules"

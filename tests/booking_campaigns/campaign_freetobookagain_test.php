@@ -29,7 +29,7 @@ use advanced_testcase;
 use mod_booking_generator;
 use context_system;
 use mod_booking\bo_availability\bo_info;
-use mod_booking\task\check_campaign_freetobookagain;
+use mod_booking\task\purge_campaign_caches;
 use stdClass;
 use tool_mocktesttime\time_mock;
 
@@ -68,7 +68,7 @@ final class campaign_freetobookagain_test extends advanced_testcase {
     }
 
     /**
-     * Test that the check_campaign_freetobookagain task triggers the freetobookagain event
+     * Test that the purge_campaign_caches task triggers the freetobookagain event
      * when a campaign with limitfactor > 1 increases available places above booked count.
      *
      * Scenario:
@@ -76,9 +76,9 @@ final class campaign_freetobookagain_test extends advanced_testcase {
      * - 2 students are booked (fully booked).
      * - 1 student is on the waitinglist.
      * - A campaign with limitfactor=2 starts, doubling available places to 4.
-     * - The check_campaign_freetobookagain task detects freed places and triggers the event.
+     * - The purge_campaign_caches task detects freed places and triggers the event.
      *
-     * @covers \mod_booking\task\check_campaign_freetobookagain::execute
+     * @covers \mod_booking\task\purge_campaign_caches::execute
      * @covers \mod_booking\booking_option::check_if_free_to_book_again
      *
      * @param array $bdata
@@ -255,11 +255,12 @@ final class campaign_freetobookagain_test extends advanced_testcase {
         // Clear any adhoc tasks that were created during setup.
         $DB->delete_records('task_adhoc', ['classname' => '\mod_booking\task\send_mail_by_rule_adhoc']);
 
-        // Now execute the check_campaign_freetobookagain task.
-        $task = new check_campaign_freetobookagain();
+        // Now execute the purge_campaign_caches task with campaign data.
+        $task = new purge_campaign_caches();
         $task->set_custom_data((object) [
             'campaignid' => 1,
             'limitfactor' => 2.0,
+            'campaignstart' => true,
         ]);
 
         // Reset singletons again before task execution (simulating cron environment).
@@ -293,10 +294,10 @@ final class campaign_freetobookagain_test extends advanced_testcase {
     }
 
     /**
-     * Test that the check_campaign_freetobookagain task does NOT trigger the event
+     * Test that the purge_campaign_caches task does NOT trigger the event
      * when the option is not fully booked (no places freed).
      *
-     * @covers \mod_booking\task\check_campaign_freetobookagain::execute
+     * @covers \mod_booking\task\purge_campaign_caches::execute
      *
      * @param array $bdata
      * @throws \coding_exception
@@ -404,10 +405,11 @@ final class campaign_freetobookagain_test extends advanced_testcase {
         $DB->delete_records('task_adhoc', ['classname' => '\mod_booking\task\send_mail_by_rule_adhoc']);
 
         // Execute the task.
-        $task = new check_campaign_freetobookagain();
+        $task = new purge_campaign_caches();
         $task->set_custom_data((object) [
             'campaignid' => 1,
             'limitfactor' => 2.0,
+            'campaignstart' => true,
         ]);
 
         singleton_service::destroy_instance();

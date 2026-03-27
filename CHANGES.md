@@ -1,3 +1,39 @@
+## Version 9.2.0 (2026032700)
+* New feature: Show custom fields of related person (person affected by event) by adding "-related" to the placeholder, e.g. {myuserprofilefield-related}.
+* New feature: New {emailrelated} placeholder to show e-mail of the related user (person affected by event).
+* New feature: Make all conditions skippable and hide or freeze them in form depending on capability.
+* Improvement: Major improvements for field customfield handling and custom field performance.
+* Improvement: Make sure we also add custom fields with empty value to customfieldsfortemplates array.
+* Improvement: Task to check campaign start and end and check if freetobookagain event should be triggered.
+* Improvement: Add certificate conditions.
+* Improvement: Do not show certain buttons in wrong contexts (or when capability is missing).
+* Improvement: Answers can be updated on import.
+* Improvement: Add customfieldshortname-not functionality to shortcodes to exclude customfields.
+* Improvement: Include Cohort and cohort selector into report.
+* Improvement: Add a fallback on optionid when a rule event actually references a different table id.
+* Improvement: When a user has completed a booking option, (s)he cannot cancel anymore.
+* Improvement: Fix hardcoded supervisor logic.
+* Improvement: Created years past filter.
+* Improvement: Created a filter that checks if the value of a profilefield is the current user.
+* Improvement: Divided datasource more broadly into answers and options.
+* Improvement: Remove legacy code with field sport that does not exist in booking.
+* Bugfix: Possibility to use custom user profile field twice for availability condition.
+* Bugfix: Fix permission check in search_users web service.
+* Bugfix: Selflearningcourse element is introduced in duration class, so move hidelf check for enrolmentstatus to duration class.
+* Bugfix: Fix call of get_instance_fields_data (use static function in api).
+* Bugfix: Fix reduced forms if elements depend on other non-present elements.
+* Bugfix: Make sure reduced forms can be saved even if custom fields are missing.
+* Bugfix: Only send reminder mails with correct runtime.
+* Bugfix: Fix unit tests bug when timezone switches to daylight saving time (DST).
+* Bugfix: Fix bug when 'fieldname' key in recurringoptions is not set.
+* Bugfix: Customfield shortnames are not unique.
+* Bugfix: Confirm not showing when user is booked.
+* Bugfix: fix capability check when no shopping cart is used.
+* Bugfix: When a field in a custom form must not be empty we also do not allow blanks.
+* Bugfix: add missing booking instance settings on cancellation to the backup.
+* Bugfix: Fix timezone bug that saved wrong dates when user had a different timezone than server timezone.
+* Bugfix: Do not load any deleted, suspended or unconfirmed users.
+
 ## Version 9.1.6 (2026030900)
 * New feature: Show custom fields of related person (person affected by event) by adding "-related" to the placeholder, e.g. {myuserprofilefield-related}.
 * New feature: New {emailrelated} placeholder to show e-mail of the related user (person affected by event).

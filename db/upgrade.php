@@ -5188,19 +5188,16 @@ function xmldb_booking_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2026021100, 'booking');
     }
 
-    // Add certificate conditions tables (pro feature).
-    if ($oldversion < 2026030200) {
-        // If previous attempts created malformed tables we drop them first so the new
-        // definition with proper primary key/auto column can be applied.
-        $table = new xmldb_table('booking_cert_cond');
-        if ($dbman->table_exists($table)) {
-            $dbman->drop_table($table);
-        }
-        $table = new xmldb_table('booking_cert_cond_item');
-        if ($dbman->table_exists($table)) {
-            $dbman->drop_table($table);
-        }
+    if ($oldversion < 2026030500) {
+        // Run a script that deletes all custom fields within the tool_certificate component.
+        delete_customfields_in_tool_certificate_2026030500();
 
+        // Booking savepoint reached.
+        upgrade_mod_savepoint(true, 2026030500, 'booking');
+    }
+
+    // Add certificate conditions tables (pro feature).
+    if ($oldversion < 2026032700) {
         // Define table booking_cert_cond to be created.
         $table = new xmldb_table('booking_cert_cond');
 
@@ -5252,16 +5249,8 @@ function xmldb_booking_upgrade($oldversion) {
             $dbman->create_table($table);
         }
 
-        upgrade_mod_savepoint(true, 2026030204, 'booking');
+        upgrade_mod_savepoint(true, 2026032700, 'booking');
     }
-
-    if ($oldversion < 2026030500) {
-    // Run a script that deletes all custom fields within the tool_certificate component.
-    delete_customfields_in_tool_certificate_2026030500();
-
-    // Booking savepoint reached.
-    upgrade_mod_savepoint(true, 2026030500, 'booking');
 
     return true;
-    }
 }

@@ -1,3 +1,7 @@
+## Version 9.2.1 (2026033000)
+* Improvement: Make sure freetobookagain event is also triggered at campaign start/end if there are free places again because of campaign limits. Do this within the purge_campaign_caches task.
+* Bugfix: Make sure specific time mails are not sent incorrectly.
+
 ## Version 9.2.0 (2026032700)
 * New feature: Show custom fields of related person (person affected by event) by adding "-related" to the placeholder, e.g. {myuserprofilefield-related}.
 * New feature: New {emailrelated} placeholder to show e-mail of the related user (person affected by event).

@@ -509,7 +509,8 @@ class signinsheet_generator {
             if ($imagedata === null) {
                 $replacements['[[userpic]]'] = '';
             } else {
-                $replacements['[[userpic]]'] = '<img src="data:image/jpeg;base64,' . base64_encode($imagedata) . '" width="56" height="56"/>';
+                $replacements['[[userpic]]'] = '<img src="data:image/jpeg;base64,' .
+                    base64_encode($imagedata) . '" width="56" height="56"/>';
             }
             $sessioncols = str_repeat('<td></td>', count($extrasessioncols));
             foreach ($replacements as $placeholder => $realvalue) {
@@ -600,7 +601,7 @@ class signinsheet_generator {
         $fs = get_file_storage();
         $files = $fs->get_area_files($usercontext->id, 'user', 'icon', false, 'filesize DESC', false);
         foreach ($files as $file) {
-            // f1 is the standard-size profile picture stored by Moodle.
+            // Note: f1 is the standard-size profile picture stored by Moodle.
             if (strpos($file->get_filename(), 'f1') === 0 && $file->get_filesize() > 0) {
                 return $file->get_content();
             }
@@ -956,11 +957,28 @@ class signinsheet_generator {
                             try {
                                 $this->pdf->Image(
                                     '@' . $imagedata,
-                                    null, null, 0, $h, '', '', 'T', true, 400, '',
-                                    false, false, 1, false, false, false
+                                    null,
+                                    null,
+                                    0,
+                                    $h,
+                                    '',
+                                    '',
+                                    'T',
+                                    true,
+                                    400,
+                                    '',
+                                    false,
+                                    false,
+                                    1,
+                                    false,
+                                    false,
+                                    false,
                                 );
                             } catch (\Exception $e) {
-                                debugging('signinsheet: userpic error for user ' . $user->id . ': ' . $e->getMessage(), DEBUG_DEVELOPER);
+                                debugging(
+                                    'signinsheet: userpic error for user ' . $user->id . ': ' . $e->getMessage(),
+                                    DEBUG_DEVELOPER
+                                );
                             }
                         }
                         $escape = true;

@@ -25,6 +25,7 @@
 namespace mod_booking;
 
 use coding_exception;
+use mod_booking\bo_availability\conditions\customform;
 use mod_booking\output\report_edit_bookingnotes;
 use html_writer;
 use moodle_url;
@@ -386,6 +387,7 @@ class all_userbookings extends \table_sql {
             $ba = singleton_service::get_instance_of_booking_answers($settings);
             $usersonlist = $ba->get_usersonlist();
             $usersonwaitinglist = $ba->get_usersonwaitinglist();
+
             if (
                 $answer = $usersonlist[(int)$value->userid]
                 ?? $usersonwaitinglist[(int)$value->userid]
@@ -393,18 +395,9 @@ class all_userbookings extends \table_sql {
             ) {
                 [$prefix, $counter] = explode('_', $colname);
 
-                if (
-                    isset($answer->json) &&
-                    $jsonobject = json_decode($answer->json)
-                ) {
-                    if (isset($jsonobject->condition_customform)) {
-                        foreach ($jsonobject->condition_customform as $key => $value) {
-                            $array = explode('_', $key);
-                            if (isset($array[2]) &&  $array[2] == $counter) {
-                                return format_string((string)$value);
-                            }
-                        }
-                    }
+                $customformvalue = customform::get_customform_field_value($settings, $answer, (int)$counter);
+                if ($customformvalue !== null) {
+                    return format_string($customformvalue);
                 }
             }
             return '';

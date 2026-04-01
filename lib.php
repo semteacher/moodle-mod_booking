@@ -1319,16 +1319,17 @@ function booking_extend_settings_navigation(settings_navigation $settings, navig
     if (!$cm) {
         return;
     }
+    $cmid = $cm->id;
 
     $context = $cm->context;
     $course = $PAGE->course;
     $optionid = $PAGE->url->get_param('optionid');
 
-    $bookingsettings = singleton_service::get_instance_of_booking_settings_by_cmid($cm->id);
+    $bookingsettings = singleton_service::get_instance_of_booking_settings_by_cmid($cmid);
 
     $bookingisteacher = false; // Set to false by default.
     if (!is_null($optionid) && $optionid > 0) {
-        $option = singleton_service::get_instance_of_booking_option($cm->id, $optionid);
+        $option = singleton_service::get_instance_of_booking_option($cmid, $optionid);
         $bookingisteacher = booking_check_if_teacher($option->option);
     }
 
@@ -1337,7 +1338,7 @@ function booking_extend_settings_navigation(settings_navigation $settings, navig
     }
 
     // Set the returnurl to navigate back to after form is saved.
-    $viewphpurl = new moodle_url('/mod/booking/view.php', ['id' => $cm->id]);
+    $viewphpurl = new moodle_url('/mod/booking/view.php', ['id' => $cmid]);
     $returnurl = $viewphpurl->out();
 
     if (
@@ -1350,7 +1351,7 @@ function booking_extend_settings_navigation(settings_navigation $settings, navig
             new moodle_url(
                 '/mod/booking/editoptions.php',
                 [
-                    'id' => $cm->id,
+                    'id' => $cmid,
                     'optionid' => '',
                     'returnto' => 'url',
                     'returnurl' => $returnurl,
@@ -1377,7 +1378,7 @@ function booking_extend_settings_navigation(settings_navigation $settings, navig
                     get_string('saveinstanceastemplate', 'mod_booking'),
                     new moodle_url(
                         '/mod/booking/instancetemplateadd.php',
-                        ['id' => $cm->id]
+                        ['id' => $cmid]
                     ),
                     navigation_node::TYPE_CUSTOM,
                     null,
@@ -1387,7 +1388,7 @@ function booking_extend_settings_navigation(settings_navigation $settings, navig
         }
     }
 
-    $urlparam = ['id' => $cm->id, 'optionid' => -1];
+    $urlparam = ['id' => $cmid, 'optionid' => -1];
     if (!$templateid = $DB->get_field('booking', 'templateid', ['id' => $cm->instance])) {
         $templateid = get_config('booking', 'defaulttemplate');
     }
@@ -1398,21 +1399,21 @@ function booking_extend_settings_navigation(settings_navigation $settings, navig
     if (has_capability('mod/booking:updatebooking', $context)) {
         $navref->add(
             get_string('importcsvbookingoption', 'mod_booking'),
-            new moodle_url('/mod/booking/importoptions.php', ['id' => $cm->id]),
+            new moodle_url('/mod/booking/importoptions.php', ['id' => $cmid]),
             navigation_node::TYPE_CUSTOM,
             null,
             'nav_importcsvbookingoption'
         );
         $navref->add(
             get_string('tagtemplates', 'mod_booking'),
-            new moodle_url('/mod/booking/tagtemplates.php', ['id' => $cm->id]),
+            new moodle_url('/mod/booking/tagtemplates.php', ['id' => $cmid]),
             navigation_node::TYPE_CUSTOM,
             null,
             'nav_tagtemplates'
         );
         $navref->add(
             get_string('importexcelbutton', 'mod_booking'),
-            new moodle_url('/mod/booking/importexcel.php', ['id' => $cm->id]),
+            new moodle_url('/mod/booking/importexcel.php', ['id' => $cmid]),
             navigation_node::TYPE_CUSTOM,
             null,
             'nav_importexcelbutton'
@@ -1421,21 +1422,21 @@ function booking_extend_settings_navigation(settings_navigation $settings, navig
         // TODO: Add capability for changesemester. Only admins should be allowed to do this!
         $navref->add(
             get_string('changesemester', 'mod_booking'),
-            new moodle_url('/mod/booking/semesters.php', ['id' => $cm->id]),
+            new moodle_url('/mod/booking/semesters.php', ['id' => $cmid]),
             navigation_node::TYPE_CUSTOM,
             null,
             'nav_changesemester'
         );
         $navref->add(
             get_string('recalculateprices', 'mod_booking'),
-            new moodle_url('/mod/booking/recalculateprices.php', ['id' => $cm->id]),
+            new moodle_url('/mod/booking/recalculateprices.php', ['id' => $cmid]),
             navigation_node::TYPE_CUSTOM,
             null,
             'nav_recalculateprices'
         );
         $navref->add(
             get_string('teachersinstancereport', 'mod_booking') . " (" . format_string($bookingsettings->name) . ")",
-            new moodle_url('/mod/booking/teachers_instance_report.php', ['cmid' => $cm->id]),
+            new moodle_url('/mod/booking/teachers_instance_report.php', ['cmid' => $cmid]),
             navigation_node::TYPE_CUSTOM,
             null,
             'nav_teachers_instance_report'
@@ -1448,7 +1449,7 @@ function booking_extend_settings_navigation(settings_navigation $settings, navig
             get_string('optionformconfig', 'mod_booking') . " (" . format_string($bookingsettings->name) . ")",
             new moodle_url(
                 '/mod/booking/optionformconfig.php',
-                ['cmid' => $cm->id]
+                ['cmid' => $cmid]
             ),
             navigation_node::TYPE_CUSTOM,
             null,
@@ -1465,7 +1466,7 @@ function booking_extend_settings_navigation(settings_navigation $settings, navig
                 get_string('bookingrules', 'mod_booking') . " (" . format_string($bookingsettings->name) . ")",
                 new moodle_url(
                     '/mod/booking/edit_rules.php',
-                    ['cmid' => $cm->id]
+                    ['cmid' => $cmid]
                 ),
                 navigation_node::TYPE_CUSTOM,
                 null,
@@ -1485,7 +1486,7 @@ function booking_extend_settings_navigation(settings_navigation $settings, navig
                 get_string('certificateconditions', 'mod_booking') . " (" . format_string($bookingsettings->name) . ")",
                 new moodle_url(
                     '/mod/booking/edit_certificateconditions.php',
-                    ['cmid' => $cm->id]
+                    ['cmid' => $cmid]
                 ),
                 navigation_node::TYPE_CUSTOM,
                 null,
@@ -1503,7 +1504,7 @@ function booking_extend_settings_navigation(settings_navigation $settings, navig
                 get_string('bookingstracker', 'mod_booking') . " (" . format_string($bookingsettings->name) . ")",
                 new moodle_url(
                     '/mod/booking/report2.php',
-                    ['cmid' => $cm->id]
+                    ['cmid' => $cmid]
                 ),
                 navigation_node::TYPE_CUSTOM,
                 null,
@@ -1566,7 +1567,7 @@ function booking_extend_settings_navigation(settings_navigation $settings, navig
                 get_string('editbookingoption', 'mod_booking'),
                 new moodle_url(
                     '/mod/booking/editoptions.php',
-                    ['id' => $cm->id, 'optionid' => $optionid]
+                    ['id' => $cmid, 'optionid' => $optionid]
                 ),
                 navigation_node::TYPE_CUSTOM,
                 null,
@@ -1576,7 +1577,7 @@ function booking_extend_settings_navigation(settings_navigation $settings, navig
                 get_string('manageresponses', 'mod_booking'),
                 new moodle_url(
                     '/mod/booking/report.php',
-                    ['id' => $cm->id, 'optionid' => $optionid]
+                    ['id' => $cmid, 'optionid' => $optionid]
                 ),
                 navigation_node::TYPE_CUSTOM,
                 null,
@@ -1588,7 +1589,7 @@ function booking_extend_settings_navigation(settings_navigation $settings, navig
                 get_string('duplicatebookingoption', 'booking'),
                 new moodle_url(
                     '/mod/booking/editoptions.php',
-                    ['id' => $cm->id, 'optionid' => -1, 'copyoptionid' => $optionid]
+                    ['id' => $cmid, 'optionid' => -1, 'copyoptionid' => $optionid]
                 ),
                 navigation_node::TYPE_CUSTOM,
                 null,
@@ -1601,7 +1602,7 @@ function booking_extend_settings_navigation(settings_navigation $settings, navig
                 get_string('bookotherusers', 'booking'),
                 new moodle_url(
                     '/mod/booking/subscribeusers.php',
-                    ['id' => $cm->id, 'optionid' => $optionid]
+                    ['id' => $cmid, 'optionid' => $optionid]
                 ),
                 navigation_node::TYPE_CUSTOM,
                 null,
@@ -1613,7 +1614,7 @@ function booking_extend_settings_navigation(settings_navigation $settings, navig
                     get_string('bookuserswithoutcompletedactivity', 'booking'),
                     new moodle_url(
                         '/mod/booking/subscribeusersactivity.php',
-                        ['id' => $cm->id, 'optionid' => $optionid]
+                        ['id' => $cmid, 'optionid' => $optionid]
                     ),
                     navigation_node::TYPE_CUSTOM,
                     null,
@@ -1631,7 +1632,7 @@ function booking_extend_settings_navigation(settings_navigation $settings, navig
         if (has_capability('mod/booking:updatebooking', context_course::instance($course->id)) && $bookinginstances > 1) {
             $navref->add(get_string('moveoptionto', 'booking'),
                 new moodle_url('/mod/booking/moveoption.php',
-                    array('id' => $cm->id, 'optionid' => $optionid, 'sesskey' => sesskey())),
+                    array('id' => $cmid, 'optionid' => $optionid, 'sesskey' => sesskey())),
                     navigation_node::TYPE_CUSTOM, null, 'nav_moveoptionto');
         } */
 
@@ -1653,7 +1654,7 @@ function booking_extend_settings_navigation(settings_navigation $settings, navig
                         get_string('confirmuserswith', 'booking'),
                         new moodle_url(
                             '/mod/booking/confirmactivity.php',
-                            ['id' => $cm->id, 'optionid' => $optionid]
+                            ['id' => $cmid, 'optionid' => $optionid]
                         ),
                         navigation_node::TYPE_CUSTOM,
                         null,
@@ -1662,14 +1663,14 @@ function booking_extend_settings_navigation(settings_navigation $settings, navig
                 }
             }
             if (
-                has_capability('mod/booking:updatebooking', context_module::instance($cm->id))
+                has_capability('mod/booking:updatebooking', context_module::instance($cmid))
                 && $booking->conectedbooking > 0
             ) {
                 $navref->add(
                     get_string('editotherbooking', 'booking'),
                     new moodle_url(
                         '/mod/booking/otherbooking.php',
-                        ['id' => $cm->id, 'optionid' => $optionid]
+                        ['id' => $cmid, 'optionid' => $optionid]
                     ),
                     navigation_node::TYPE_CUSTOM,
                     null,
@@ -1684,7 +1685,7 @@ function booking_extend_settings_navigation(settings_navigation $settings, navig
                 new moodle_url(
                     '/mod/booking/report.php',
                     [
-                        'id' => $cm->id,
+                        'id' => $cmid,
                         'optionid' => $optionid,
                         'action' => 'deletebookingoption',
                         'sesskey' => sesskey(),
@@ -1704,7 +1705,7 @@ function booking_extend_settings_navigation(settings_navigation $settings, navig
                 new moodle_url(
                     '/mod/booking/report.php',
                     [
-                        'id' => $cm->id,
+                        'id' => $cmid,
                         'optionid' => $optionid,
                         'action' => 'copytotemplate',
                         'sesskey' => sesskey(),
@@ -1720,7 +1721,7 @@ function booking_extend_settings_navigation(settings_navigation $settings, navig
             get_string("manageoptiontemplates", "mod_booking"),
             new moodle_url(
                 '/mod/booking/optiontemplatessettings.php',
-                ['id' => $cm->id]
+                ['id' => $cmid]
             ),
             navigation_node::TYPE_CUSTOM,
             null,

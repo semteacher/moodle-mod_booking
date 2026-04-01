@@ -74,7 +74,7 @@ class certificate_conditions {
      * @param int $contextid
      * @return void
      */
-    public static function delete_condition_by_context(int $contextid) {
+    public static function delete_conditions_by_context(int $contextid) {
         global $DB;
         if ($contextid == context_system::instance()->id) {
             return;

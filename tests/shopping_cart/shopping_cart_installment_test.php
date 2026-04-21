@@ -401,6 +401,92 @@ final class shopping_cart_installment_test extends advanced_testcase {
         // Get infor about installments.
         $open = $cartstore->get_open_installments();
         $this->assertCount(0, $open);
+
+        // Update option's shoppinng cart settings and validate changes.
+        $this->setAdminUser();
+        // Trigger and capture events.
+        unset_config('noemailever');
+        ob_start();
+        $sink = $this->redirectEvents();
+        $record->id = $option->id;
+        $record->cmid = $settings->cmid;
+        $record->sch_downpayment = 42;
+        $record->sch_numberofpayments = 3;
+        $record->sch_duedatevariable = 3;
+        booking_option::update($record);
+        $logs = $DB->get_records('logstore_standard_log');
+        $logs2 = self::get_latest_for_course($course1->id, 50);
+        // Required to solve cahce issue.
+        singleton_service::destroy_booking_option_singleton($option->id);
+
+        $events = $sink->get_events();
+
+        $res = ob_get_clean();
+        $sink->close();
+                // Last event must be on the option update.
+        foreach ($events as $key => $event) {
+            if ($event instanceof bookingoption_updated) {
+                // Checking that the event contains the expected values.
+                $this->assertInstanceOf('mod_booking\event\bookingoption_updated', $event);
+                $modulecontext = \context_module::instance($settings->cmid);
+                $this->assertEquals($modulecontext, $event->get_context());
+                $this->assertEventContextNotUsed($event);
+                $data = $event->get_data();
+                $this->assertIsArray($data);
+                $this->assertIsArray($data['other']['changes']);
+                $changes = $data['other']['changes'];
+                foreach ($changes as $change) {
+                    switch ($change['fieldname']) {
+                        case 'sch_downpayment':
+                            $this->assertEquals(42, $change['newvalue']);
+                            $this->assertEquals(44, $change['oldvalue']);
+                            break;
+                        case 'sch_numberofpayments':
+                            $this->assertEquals(3, $change['newvalue']);
+                            $this->assertEquals(2, $change['oldvalue']);
+                            break;
+                        case 'sch_duedatevariable':
+                            $this->assertEquals(3, $change['newvalue']);
+                            $this->assertEquals(4, $change['oldvalue']);
+                            break;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Fetch latest events for a given course.
+     *
+     * @param int $courseid Course ID.
+     * @param int $limit Maximum number of rows to return.
+     * @return \stdClass[] Array of event records from the standard log store reader.
+     */
+    public static function get_latest_for_course(int $courseid, int $limit = 50): array {
+        $logmanager = get_log_manager();
+
+        // Find the standard log store reader.
+        $standardreader = null;
+        foreach ($logmanager->get_readers() as $reader) {
+            if ($reader instanceof \logstore_standard\log\store) {
+                $standardreader = $reader;
+                break;
+            }
+        }
+
+        if (!$standardreader) {
+            return [];
+        }
+
+        // This select/filter is applied by the log store API (not direct $DB usage).
+        $select = 'courseid = :courseid';
+        $params = ['courseid' => $courseid];
+        $sort = 'timecreated DESC';
+
+        $events = $standardreader->get_events_select($select, $params, $sort, 0, $limit);
+
+        // Iterator -> array for easier consumption.
+        return iterator_to_array($events, false);
     }
 
     /**

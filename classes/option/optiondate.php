@@ -283,11 +283,17 @@ class optiondate {
     public static function compare_optiondates(array $oldoptiondate, array $newoptiondate, int $mode = 0): bool {
 
         if ($mode <= 1) {
+            $olddaystonotify = (int)($oldoptiondate['daystonotify'] ?? 0);
+            $newdaystonotify = (int)($newoptiondate['daystonotify'] ?? 0);
+            $shouldcomparedaystonotify = (bool)get_config('booking', 'uselegacymailtemplates');
             if (
                 ($oldoptiondate['optiondateid'] != $newoptiondate['optiondateid'])
                 || ($oldoptiondate['coursestarttime'] != $newoptiondate['coursestarttime'])
                 || $oldoptiondate['courseendtime'] != $newoptiondate['courseendtime']
-                || $oldoptiondate['daystonotify'] != $newoptiondate['daystonotify'] // Also check daystonotify!
+                || (
+                    $shouldcomparedaystonotify
+                    && $olddaystonotify != $newdaystonotify
+                ) // Also check daystonotify for legacy templates.
             ) {
                 // If one of the dates is not exactly the same, we need to delete the current option and add a new one.
                 return false;

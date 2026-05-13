@@ -369,7 +369,8 @@ if there only was one booking option. */
 }
 
 #prepage-booking-tabs li {
-    color: lightgray;
+    /*color: lightgray;*/
+    color: #767676;
     list-style-type: none;
     font-size: 15px;
     width: 25%;

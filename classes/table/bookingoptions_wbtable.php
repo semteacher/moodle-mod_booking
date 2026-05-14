@@ -1060,7 +1060,8 @@ class bookingoptions_wbtable extends wunderbyte_table {
             booking_check_if_teacher($values));
 
         $ddoptions = [];
-        $ret = '<div class="menubar p-1" id="action-menu-' . $optionid . '-menubar" role="menubar">';
+        $ret = '<div class="menubar p-1" id="action-menu-' . $optionid . '-menubar" role="group" aria-label="' .
+            get_string('actions') . '">';
 
         if ($status == MOD_BOOKING_STATUSPARAM_BOOKED) {
             $ret .= html_writer::link(

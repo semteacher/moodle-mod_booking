@@ -102,13 +102,15 @@ Feature: Create booking campaigns for booking options as admin and booking it as
     And I should see "44.00 EUR" in the ".allbookingoptionstable_r2 .pricecurrency" "css_element"
     And I should see "/ 2" in the ".allbookingoptionstable_r2 .col-ap-availableplaces" "css_element"
 
-  @javascript
+  @javascript @accessibility
   Scenario: Booking campaigns: create bloking booking campaign via DB view and book as students
     Given the following "mod_booking > campaigns" exist:
       | name      | type | json                                                                                                                                                                                                                                        | starttime   | endtime        | pricefactor | limitfactor |
       | campaign3 | 1    | {"bofieldname":"spt1","fieldvalue":"yoga","blockoperator":"blockabove","blockinglabel":"Above30","hascapability":null,"percentageavailableplaces":30, "campaignfieldnameoperator" : "=", "cpfield" : "", "cpoperator" : "", "cpvalue" : ""} | ## today ## | ## + 1 year ## | 1           | 1           |
     ## Verify "above" blocking campaign - student1 can book
     When I am on the "BookingCMP" Activity page logged in as student1
+    ## Validate accessibility of booking options table before booking
+    And the page should meet accessibility standards
     And I should see "Option-football" in the ".allbookingoptionstable_r1" "css_element"
     And I should see "88.00 EUR" in the ".allbookingoptionstable_r1 .pricecurrency" "css_element"
     And I should see "/ 2" in the ".allbookingoptionstable_r1 .col-ap-availableplaces" "css_element"
@@ -119,9 +121,15 @@ Feature: Create booking campaigns for booking options as admin and booking it as
     And I should see "Book now" in the ".allbookingoptionstable_r3 .booknow" "css_element"
     And I should see "/ 3" in the ".allbookingoptionstable_r3 .col-ap-availableplaces" "css_element"
     And I click on "Book now" "text" in the ".allbookingoptionstable_r3 .booknow" "css_element"
+    ## Validate accessibility of booking options table before booking
+    And the page should meet accessibility standards
     And I should see "Click again to confirm booking" in the ".allbookingoptionstable_r3" "css_element"
+    ## Validate accessibility of booking options table before booking
+    And the page should meet accessibility standards
     And I click on "Click again to confirm booking" "text" in the ".allbookingoptionstable_r3" "css_element"
     And I should see "Start" in the ".allbookingoptionstable_r3" "css_element"
+    ## Validate accessibility of booking options table before booking
+    And the page should meet accessibility standards
     And I log out
     ## Verify "above" blocking campaign - student2 can NOT book
     And I am on the "BookingCMP" Activity page logged in as student2

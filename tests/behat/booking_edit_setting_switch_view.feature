@@ -32,7 +32,12 @@ Feature: Edit booking's settings for the view swithing as a teacher and use it a
 
   @javascript @accessibility
   Scenario: Booking settings - display template view switcher and use it
-    Given I am on the "My booking" Activity page logged in as teacher1
+        Given the following config values are set as admin:
+      | config        | value    | plugin     |
+      | theme         | musi     |            |
+      | preset        | usi_vienna | theme_musi |
+      | logoplacement | embedded | theme_musi |
+    And I am on the "My booking" Activity page logged in as teacher1
     And I follow "Settings"
     And I set the field "Users can switch between views" to "checked"
     And I press "Save and display"
@@ -92,7 +97,12 @@ Feature: Edit booking's settings for the view swithing as a teacher and use it a
 
   @javascript @accessibility
   Scenario: Booking settings - manage template view switcher
-    Given I am on the "My booking" Activity page logged in as teacher1
+    Given the following config values are set as admin:
+      | config        | value    | plugin     |
+      | theme         | musi     |            |
+      | preset        | usi_vienna | theme_musi |
+      | logoplacement | embedded | theme_musi | 
+    And I am on the "My booking" Activity page logged in as teacher1
     And I follow "Settings"
     And I set the field "Users can switch between views" to "checked"
     And I press "Save and display"

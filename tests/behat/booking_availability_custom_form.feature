@@ -57,6 +57,11 @@ Feature: Create custom availability form for booking options as admin and bookin
     ## Or use
     ## And I set the following administration settings values:
     ##  | User profile field for price category | userpricecat |
+    And the following config values are set as admin:
+      | config        | value    | plugin     |
+      | theme         | musi     |            |
+      | preset        | usi_vienna | theme_musi |
+      | logoplacement | embedded | theme_musi |
     And I log in as "admin"
     And I am on the "BookingCMP" Activity page
     And I click on "Edit booking option" "icon" in the ".allbookingoptionstable_r1" "css_element"

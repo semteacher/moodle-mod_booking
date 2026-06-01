@@ -381,7 +381,12 @@ Feature: Test booking options avaialbility conditions
 
   @javascript @accessibility
   Scenario: Configure availability to fill modal agreement form
-    Given I am on the "My booking" Activity page logged in as teacher1
+    Given the following config values are set as admin:
+      | config        | value    | plugin     |
+      | theme         | musi     |            |
+      | preset        | usi_vienna | theme_musi |
+      | logoplacement | embedded | theme_musi |
+    And I am on the "My booking" Activity page logged in as teacher1
     And I click on "Edit booking option" "icon" in the ".allbookingoptionstable_r1" "css_element"
     And I follow "Availability conditions"
     And I set the field "Form needs to be filled out before booking" to "checked"

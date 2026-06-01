@@ -43,7 +43,12 @@ Feature: In a booking - create options and filter it
 
   @javascript @accessibility
   Scenario: Booking option list: filtering by teachers and by dates
-    Given I am on the "My booking" Activity page logged in as student1
+    Given the following config values are set as admin:
+      | config        | value    | plugin     |
+      | theme         | musi     |            |
+      | preset        | usi_vienna | theme_musi |
+      | logoplacement | embedded | theme_musi |
+    And I am on the "My booking" Activity page logged in as student1
     ## And I press "Filter table"
     And I click on "Filter table" "button" in the ".allbookingoptionstable.wunderbyte_table_filter_on" "css_element"
     ## Validate accessibility of booking options table before booking

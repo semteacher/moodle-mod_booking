@@ -104,7 +104,12 @@ Feature: Create booking campaigns for booking options as admin and booking it as
 
   @javascript @accessibility
   Scenario: Booking campaigns: create bloking booking campaign via DB view and book as students
-    Given the following "mod_booking > campaigns" exist:
+    Given the following config values are set as admin:
+      | config        | value    | plugin     |
+      | theme         | musi     |            |
+      | preset        | usi_vienna | theme_musi |
+      | logoplacement | embedded | theme_musi |
+    And the following "mod_booking > campaigns" exist:
       | name      | type | json                                                                                                                                                                                                                                        | starttime   | endtime        | pricefactor | limitfactor |
       | campaign3 | 1    | {"bofieldname":"spt1","fieldvalue":"yoga","blockoperator":"blockabove","blockinglabel":"Above30","hascapability":null,"percentageavailableplaces":30, "campaignfieldnameoperator" : "=", "cpfield" : "", "cpoperator" : "", "cpvalue" : ""} | ## today ## | ## + 1 year ## | 1           | 1           |
     ## Verify "above" blocking campaign - student1 can book

@@ -31,7 +31,12 @@ Feature: Configure and use booking's pagination and perform filtering - as a tea
 
   @javascript @accessibility
   Scenario: Configure pagination and navigate pages with list of booking options
-    Given I am on the "My booking" Activity page logged in as teacher1
+    Given the following config values are set as admin:
+      | config        | value    | plugin     |
+      | theme         | musi     |            |
+      | preset        | usi_vienna | theme_musi |
+      | logoplacement | embedded | theme_musi |
+    And I am on the "My booking" Activity page logged in as teacher1
     And I should see "Booking Option 1" in the ".allbookingoptionstable_r1" "css_element"
     And I should see "Booking Option 5" in the ".allbookingoptionstable_r5" "css_element"
     And "//div[contains(@class, 'allbookingoptionstable')]//ul[@class='pagination']" "xpath_element" should not exist
@@ -64,7 +69,12 @@ Feature: Configure and use booking's pagination and perform filtering - as a tea
 
   @javascript @accessibility
   Scenario: Filter of list of booking options including if pagination
-    Given I am on the "My booking" Activity page logged in as student1
+    Given the following config values are set as admin:
+      | config        | value    | plugin     |
+      | theme         | musi     |            |
+      | preset        | usi_vienna | theme_musi |
+      | logoplacement | embedded | theme_musi |
+    And I am on the "My booking" Activity page logged in as student1
     And I should see "Booking Option 1" in the ".allbookingoptionstable_r1" "css_element"
     And I should see "Booking Option 5" in the ".allbookingoptionstable_r5" "css_element"
     And "//div[contains(@class, 'allbookingoptionstable')]//ul[@class='pagination']" "xpath_element" should not exist

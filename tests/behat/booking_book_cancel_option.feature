@@ -50,7 +50,12 @@ Feature: In a booking instance
 
   @javascript @accessibility
   Scenario: Booking option cancellation: book option as a student and self-cancell it
-    Given the following "mod_booking > options" exist:
+    Given the following config values are set as admin:
+      | config        | value    | plugin     |
+      | theme         | musi     |            |
+      | preset        | usi_vienna | theme_musi |
+      | logoplacement | embedded | theme_musi |
+    And the following "mod_booking > options" exist:
       | booking    | text          | course | description  |
       | My booking | Test option 1 | C1     | Cancellation |
     And I am on the "My booking" Activity page logged in as student1

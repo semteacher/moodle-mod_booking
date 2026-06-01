@@ -80,7 +80,12 @@ Feature: Enabling subboking as admin configuring subboking as a teacher and book
 
   @javascript @accessibility
   Scenario: Add subbooking person via DB to a booking option and verify as students
-    Given the following "mod_booking > subbookings" exist:
+    Given the following config values are set as admin:
+      | config        | value    | plugin     |
+      | theme         | musi     |            |
+      | preset        | usi_vienna | theme_musi |
+      | logoplacement | embedded | theme_musi |
+    And the following "mod_booking > subbookings" exist:
       | name    | type                        | option        | block | json                                                                                                                                     |
       | Partner | subbooking_additionalperson | Test option 1 | 0     | {"name":"Partner(s)","type":"subbooking_additionalperson","data":{"description":"You can invite your partner:","descriptionformat":"1"}} |
     ## Verify subbokings working: book as stundet with subbokings
@@ -183,6 +188,11 @@ Feature: Enabling subboking as admin configuring subboking as a teacher and book
       | itemname | area       | pricecategoryidentifier | price | currency |
       | item     | subbooking | default                 | 55    | EUR      |
       | item     | subbooking | discount1               | 44    | EUR      |
+    And the following config values are set as admin:
+      | config        | value    | plugin     |
+      | theme         | musi     |            |
+      | preset        | usi_vienna | theme_musi |
+      | logoplacement | embedded | theme_musi |
     ## Verify subbokings working: book as stundet with subboking item.
     When I am on the "Course 1" course page logged in as student1
     And I follow "My booking"

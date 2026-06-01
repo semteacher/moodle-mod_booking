@@ -104,6 +104,11 @@ Feature: In a course add a booking option and manage its waiting list
       | config                            | value        | plugin  |
       | pricecategoryfield                | userpricecat | booking |
       | waitinglistshowplaceonwaitinglist |              | booking |
+    And the following config values are set as admin:
+      | config        | value    | plugin     |
+      | theme         | musi     |            |
+      | preset        | usi_vienna | theme_musi |
+      | logoplacement | embedded | theme_musi |
     And the following "mod_booking > options" exist:
       | booking    | text                    | course | description  | importing | teachersforoption | useprice | maxanswers | maxoverbooking | datesmarker | optiondateid_0 | daystonotify_0 | coursestarttime_0 | courseendtime_0 | waitforconfirmation |
       | My booking | Waiting_list_with_price | C1     | Waiting list | 1         | teacher1          | 1        | 2          | 3              | 1           | 0              | 0              | ## tomorrow ##    | ## +2 days ##   | 1                   |
@@ -239,7 +244,12 @@ Feature: In a course add a booking option and manage its waiting list
 
   @javascript @accessibility
   Scenario: Booking option: reconfiguration of waiting list
-    Given the following "mod_booking > options" exist:
+    Given the following config values are set as admin:
+      | config        | value    | plugin     |
+      | theme         | musi     |            |
+      | preset        | usi_vienna | theme_musi |
+      | logoplacement | embedded | theme_musi |
+    And the following "mod_booking > options" exist:
       | booking    | text                 | course | description  | importing | teachersforoption | maxanswers | maxoverbooking | datesmarker | optiondateid_0 | daystonotify_0 | coursestarttime_0 | courseendtime_0 |
       | My booking | Option: waiting list | C1     | Waiting list | 1         | teacher1          | 2          | 2              | 1           | 0              | 0              | ## tomorrow ##    | ## +2 days ##   |
     And I am on the "My booking" Activity page logged in as teacher1

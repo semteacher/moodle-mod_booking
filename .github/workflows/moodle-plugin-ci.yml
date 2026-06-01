@@ -15,6 +15,7 @@ jobs:
       extra_plugin_runners: |
         moodle-plugin-ci add-plugin --branch MOODLE_405_accessibility Wunderbyte-GmbH/moodle-local_wunderbyte_table
         moodle-plugin-ci add-plugin --branch MOODLE_405_accessibility Wunderbyte-GmbH/local_musi
+        moodle-plugin-ci add-plugin --branch MOODLE_405_ACCESSIBILITY Wunderbyte-GmbH/moodle-theme_musi
         moodle-plugin-ci add-plugin --branch MOODLE_405_DEV Wunderbyte-GmbH/moodle-local_shopping_cart
         moodle-plugin-ci add-plugin --branch main Wunderbyte-GmbH/moodle-local_entities
         moodle-plugin-ci add-plugin --branch main Wunderbyte-GmbH/moodle-customfield_dynamicformat
@@ -94,6 +95,7 @@ jobs:
       extra_plugin_runners: |
         moodle-plugin-ci add-plugin --branch MOODLE_405_accessibility Wunderbyte-GmbH/moodle-local_wunderbyte_table
         moodle-plugin-ci add-plugin --branch MOODLE_405_accessibility Wunderbyte-GmbH/local_musi
+        moodle-plugin-ci add-plugin --branch MOODLE_405_ACCESSIBILITY Wunderbyte-GmbH/moodle-theme_musi
         moodle-plugin-ci add-plugin --branch MOODLE_405_DEV Wunderbyte-GmbH/moodle-local_shopping_cart
         moodle-plugin-ci add-plugin --branch main Wunderbyte-GmbH/moodle-local_entities
         moodle-plugin-ci add-plugin --branch main Wunderbyte-GmbH/moodle-customfield_dynamicformat

@@ -106,6 +106,8 @@ class optiondates extends field_base {
         int $updateparam,
         $returnvalue = null
     ): array {
+        self::restore_sessions_for_slotbooking_transition($formdata, (int)($newoption->id ?? 0));
+
         // Run through all dates to make sure we don't have an array.
         // We need to transform dates to timestamps.
         [$dates, $highestindex] = dates::get_list_of_submitted_dates((array)$formdata);
@@ -224,6 +226,8 @@ class optiondates extends field_base {
      */
     public static function save_data(stdClass &$formdata, stdClass &$option): array {
 
+        self::restore_sessions_for_slotbooking_transition($formdata, (int)($option->id ?? 0));
+
         if (
             (int)($formdata->optiontype ?? MOD_BOOKING_OPTIONTYPE_DEFAULT) === MOD_BOOKING_OPTIONTYPE_SLOTBOOKING
             && (string)($formdata->slot_type ?? 'fixed') !== 'session'
@@ -239,6 +243,52 @@ class optiondates extends field_base {
         }
 
         return dates::save_optiondates_from_form($formdata, $option);
+    }
+
+    /**
+     * Restore persisted sessions if the dynamic type change omitted their form controls.
+     *
+     * Changing an existing option to session-backed slot booking rebuilds the form twice. Depending on the
+     * intermediate slot type, the option-date controls may not be present in the final request. An empty date
+     * submission normally means that all dates should be deleted, so only restore them for the specific transition
+     * from a non-slot option. Existing slot-booking options can therefore still intentionally delete all sessions.
+     *
+     * @param stdClass $formdata submitted form data
+     * @param int $optionid booking option id
+     * @return void
+     */
+    private static function restore_sessions_for_slotbooking_transition(stdClass &$formdata, int $optionid): void {
+        if (
+            $optionid <= 0
+            || (int)($formdata->optiontype ?? MOD_BOOKING_OPTIONTYPE_DEFAULT) !== MOD_BOOKING_OPTIONTYPE_SLOTBOOKING
+            || (string)($formdata->slot_type ?? 'fixed') !== 'session'
+        ) {
+            return;
+        }
+
+        foreach (array_keys((array)$formdata) as $key) {
+            if (preg_match('/^(optiondateid_|coursestarttime_|courseendtime_)/', $key)) {
+                return;
+            }
+        }
+
+        $settings = singleton_service::get_instance_of_booking_option_settings($optionid);
+        if (
+            (int)($settings->type ?? MOD_BOOKING_OPTIONTYPE_DEFAULT) === MOD_BOOKING_OPTIONTYPE_SLOTBOOKING
+            || empty($settings->sessions)
+        ) {
+            return;
+        }
+
+        $index = 0;
+        foreach ($settings->sessions as $session) {
+            $formdata->{MOD_BOOKING_FORM_OPTIONDATEID . $index} = (int)($session->optiondateid ?? $session->id ?? 0);
+            $formdata->{MOD_BOOKING_FORM_COURSESTARTTIME . $index} = (int)$session->coursestarttime;
+            $formdata->{MOD_BOOKING_FORM_COURSEENDTIME . $index} = (int)$session->courseendtime;
+            $formdata->{MOD_BOOKING_FORM_DAYSTONOTIFY . $index} = (int)($session->daystonotify ?? 0);
+            $index++;
+        }
+        $formdata->datescounter = $index;
     }
 
     /**

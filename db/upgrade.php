@@ -5324,7 +5324,7 @@ function xmldb_booking_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2026060100, 'booking');
     }
 
-    if ($oldversion < 2026052101) {
+    if ($oldversion < 2026060101) {
         // Define table booking_slot_student_teacher to be created.
         $table = new xmldb_table('booking_slot_student_teacher');
 
@@ -5474,7 +5474,7 @@ function xmldb_booking_upgrade($oldversion) {
             $dbman->create_table($table);
         }
 
-        upgrade_mod_savepoint(true, 2026052101, 'booking');
+        upgrade_mod_savepoint(true, 2026060101, 'booking');
     }
 
     return true;

@@ -92,7 +92,6 @@ Feature: Enabling installments as admin configuring installments as a teacher an
     ## Validate updates of installment settings
     And I click on "Show recent updates..." "button"
     And I wait until the page is ready
-    And I should see "2 of 2 records found" in the "#showEventList" "css_element"
     And I should see "[DELETED]" in the "#showEventList .columnclass.description" "css_element"
     And I should see "Down payment : 44" in the "#showEventList .columnclass.description" "css_element"
     And I should see "[NEW]" in the "#showEventList .columnclass.description" "css_element"
@@ -101,6 +100,10 @@ Feature: Enabling installments as admin configuring installments as a teacher an
     And I should see "Number of Payments : 3" in the "#showEventList .columnclass.description" "css_element"
     And I should see "Due nr. of days before coursestart : 1" in the "#showEventList .columnclass.description" "css_element"
     And I should see "Due nr. of days before coursestart : 2" in the "#showEventList .columnclass.description" "css_element"
+    ## Step below replaced with alternative validation due to GitHub issues (number of events had affected by previous tests)
+    ##And I should see "2 of 2 records found" in the "#showEventList" "css_element"
+    And I should not see "Number of Payments : 4" in the "#showEventList .columnclass.description" "css_element"
+    And I should not see "Due nr. of days before coursestart : 3" in the "#showEventList .columnclass.description" "css_element"
     And I log out
 
   @javascript @accessibility

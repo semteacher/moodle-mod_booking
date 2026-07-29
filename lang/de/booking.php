@@ -2852,6 +2852,7 @@ $string['report2labelinstance'] = 'Buchungsinstanz';
 $string['report2labeloption'] = 'Buchungsoption';
 $string['report2labeloptiondate'] = 'Termin';
 $string['report2labelsystem'] = 'Gesamte Seite';
+$string['report2showoptiondetails'] = 'Berichtsdetails für {$a} anzeigen';
 $string['reportfields'] = 'Felder reportieren';
 $string['reportremindermessage'] = '{bookingdetails}';
 $string['reportremindersubject'] = 'Erinnerung: Ihr gebuchter Kurs';

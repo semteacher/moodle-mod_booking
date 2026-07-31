@@ -133,6 +133,8 @@ class system extends scope_base_options {
         }
 
         $table->define_sortablecolumns($sortablecolumns);
+        $table->sort_default_column = 'timecreated';
+        $table->sort_default_order = SORT_DESC;
 
         // Filter for the booking instance.
         $instancefilter = new standardfilter('instancename', get_string('bookinginstance', 'mod_booking'));

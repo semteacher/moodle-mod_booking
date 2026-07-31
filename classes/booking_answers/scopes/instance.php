@@ -133,6 +133,8 @@ class instance extends scope_base_options {
         }
 
         $table->define_sortablecolumns($sortablecolumns);
+        $table->sort_default_column = 'timecreated';
+        $table->sort_default_order = SORT_DESC;
 
         return $table;
     }

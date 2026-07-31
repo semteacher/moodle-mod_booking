@@ -401,6 +401,12 @@ class manageusers_table extends wunderbyte_table {
         $maxanswers = empty($settings->maxanswers) ? get_string('unlimitedplaces', 'mod_booking') : $settings->maxanswers;
         $maxoverbooking = $settings->maxoverbooking ?? 0;
 
+        // A negative limit denotes an unlimited waiting list, just as an empty
+        // maxanswers value denotes unlimited regular places.
+        if ($maxoverbooking < 0) {
+            $maxoverbooking = get_string('unlimitedplaces', 'mod_booking');
+        }
+
         if ($values->waitinglist == 0) {
             return "<b>" . ($values->answerscount ?? 0) . "</b>/" . $maxanswers;
         } else if ($values->waitinglist == 1) {
@@ -408,6 +414,23 @@ class manageusers_table extends wunderbyte_table {
         }
 
         return $values->answerscount ?? '';
+    }
+
+    /**
+     * Return deterministic SQL sorting for rows created in the same second.
+     *
+     * Booking answers and options can be generated in one request and therefore
+     * share a timecreated value. PostgreSQL is free to return those ties in any
+     * order, so use the record id as a stable newest-first tie breaker.
+     *
+     * @return string
+     */
+    public function get_sql_sort(): string {
+        $sort = parent::get_sql_sort();
+        if (preg_match('/^timecreated\s+DESC$/i', trim($sort))) {
+            $sort .= ', id DESC';
+        }
+        return $sort;
     }
 
     /**

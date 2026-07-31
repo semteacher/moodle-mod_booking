@@ -121,8 +121,9 @@ class option extends scope_base {
                     'status' => get_string('presence', 'mod_booking'),
                     'presencecount' => get_string('presencecount', 'mod_booking'),
                 ];
-                $table->sort_default_column = 'lastname';
-                $table->sort_default_order = SORT_ASC;
+                $sortablecolumns['timecreated'] = get_string('timecreated', 'mod_booking');
+                $table->sort_default_column = 'timecreated';
+                $table->sort_default_order = SORT_DESC;
                 break;
             case MOD_BOOKING_STATUSPARAM_WAITINGLIST:
                 if (
@@ -137,9 +138,10 @@ class option extends scope_base {
                         'firstname' => get_string('firstname'),
                         'lastname' => get_string('lastname'),
                         'email' => get_string('email'),
+                        'timecreated' => get_string('timecreated', 'mod_booking'),
                     ];
-                    $table->sort_default_column = 'lastname';
-                    $table->sort_default_order = SORT_ASC;
+                    $table->sort_default_column = 'timecreated';
+                    $table->sort_default_order = SORT_DESC;
                 }
                 break;
             case MOD_BOOKING_STATUSPARAM_PREVIOUSLYBOOKED:

@@ -51,12 +51,16 @@ class booking_history_table extends wunderbyte_table {
     /**
      * Return deterministic newest-first SQL sorting.
      *
+     * History entries created in the same second retain their established
+     * ascending creation order. The table API only supports one default sort
+     * column, so the tie-breaker is appended to the generated SQL sort.
+     *
      * @return string
      */
     public function get_sql_sort(): string {
         $sort = parent::get_sql_sort();
         if (preg_match('/^timecreated\s+DESC$/i', trim($sort))) {
-            $sort .= ', id DESC';
+            $sort .= ', id ASC';
         }
         return $sort;
     }

@@ -239,10 +239,8 @@ Feature: Enabling subboking as admin configuring subboking as a teacher and book
     And I visit "/mod/booking/report2.php"
     And I should see "Bookings" in the "#accordion-heading-bookedusers" "css_element"
     And I should see "2 of 2 records found" in the ".wunderbyteTableClass.booked_system_0" "css_element"
-    And I should see "Option-subitem" in the "#booked_system_0_r1" "css_element"
-    And I should see "1/Unlimited" in the "#booked_system_0_r1" "css_element"
-    And I should see "Test option 1" in the "#booked_system_0_r2" "css_element"
-    And I should see "0/Unlimited" in the "#booked_system_0_r2" "css_element"
+    And "//tr[starts-with(@id, 'booked_system_0_r')][contains(., 'Option-subitem') and contains(., '1/Unlimited')]" "xpath_element" should exist
+    And "//tr[starts-with(@id, 'booked_system_0_r')][contains(., 'Test option 1') and contains(., '0/Unlimited')]" "xpath_element" should exist
     ## Validate booking history for selected booking option
     And I click on "Booking history" "text" in the "#accordion-heading-bookinghistory" "css_element"
     ## TODO: different default order of records in mysql vs pgsql

@@ -360,46 +360,24 @@ Feature: In a course add a booking option and manage its waiting list
     And I visit "/mod/booking/report2.php"
     And I should see "Bookings" in the "#accordion-heading-bookedusers" "css_element"
     And I should see "4 of 4 records found" in the ".wunderbyteTableClass.booked_system_0" "css_element"
-    And I should see "Limited WL, full" in the "#booked_system_0_r1" "css_element"
-    And I should see "2/2" in the "#booked_system_0_r1" "css_element"
-    And I should see "Limited WL, not full" in the "#booked_system_0_r2" "css_element"
-    And I should see "1/2" in the "#booked_system_0_r2" "css_element"
-    And I should see "Unlimited WL, full" in the "#booked_system_0_r3" "css_element"
-    And I should see "2/2" in the "#booked_system_0_r3" "css_element"
-    And I should see "Unlimited WL, not full" in the "#booked_system_0_r4" "css_element"
-    And I should see "1/2" in the "#booked_system_0_r4" "css_element"
+    And "//tr[starts-with(@id, 'booked_system_0_r')][contains(., 'Limited WL, full') and contains(., '2/2')]" "xpath_element" should exist
+    And "//tr[starts-with(@id, 'booked_system_0_r')][contains(., 'Limited WL, not full') and contains(., '1/2')]" "xpath_element" should exist
+    And "//tr[starts-with(@id, 'booked_system_0_r')][contains(., 'Unlimited WL, full') and contains(., '2/2')]" "xpath_element" should exist
+    And "//tr[starts-with(@id, 'booked_system_0_r')][contains(., 'Unlimited WL, not full') and contains(., '1/2')]" "xpath_element" should exist
     ## Validate bookings on waitinglist
     And I click on "Waiting list" "text" in the "#accordion-heading-waitinglist" "css_element"
     And I should see "2 of 2 records found" in the ".wunderbyteTableClass.waitinglist_system_0" "css_element"
-    And I should see "Limited WL, full" in the "#waitinglist_system_0_r1" "css_element"
-    And I should see "1/4" in the "#waitinglist_system_0_r1" "css_element"
-    And I should see "Unlimited WL, full" in the "#waitinglist_system_0_r2" "css_element"
-    And I should see "1/Unlimited" in the "#waitinglist_system_0_r2" "css_element"
-    ## Validate booking history for all booking options
+    And "//tr[starts-with(@id, 'waitinglist_system_0_r')][contains(., 'Limited WL, full') and contains(., '1/4')]" "xpath_element" should exist
+    And "//tr[starts-with(@id, 'waitinglist_system_0_r')][contains(., 'Unlimited WL, full') and contains(., '1/Unlimited')]" "xpath_element" should exist
+    ## Validate booking history for all booking options without depending on database row order.
     And I click on "Booking history" "text" in the "#accordion-heading-bookinghistory" "css_element"
-    And I should see "Unlimited WL, full" in the "#bookinghistorytable_system_0_r1 .columnclass.text" "css_element"
-    And I should see "student1@example.com" in the "#bookinghistorytable_system_0_r1 .columnclass.email" "css_element"
-    And I should see "0 - Booked" in the "#bookinghistorytable_system_0_r1 .columnclass.status" "css_element"
-    And I should see "Unlimited WL, full" in the "#bookinghistorytable_system_0_r2 .columnclass.text" "css_element"
-    And I should see "student2@example.com" in the "#bookinghistorytable_system_0_r2 .columnclass.email" "css_element"
-    And I should see "0 - Booked" in the "#bookinghistorytable_system_0_r2 .columnclass.status" "css_element"
-    And I should see "Unlimited WL, full" in the "#bookinghistorytable_system_0_r3 .columnclass.text" "css_element"
-    And I should see "student3@example.com" in the "#bookinghistorytable_system_0_r3 .columnclass.email" "css_element"
-    And I should see "1 - Waiting list" in the "#bookinghistorytable_system_0_r3 .columnclass.status" "css_element"
-    And I should see "Unlimited WL, not full" in the "#bookinghistorytable_system_0_r4 .columnclass.text" "css_element"
-    And I should see "student1@example.com" in the "#bookinghistorytable_system_0_r4 .columnclass.email" "css_element"
-    And I should see "0 - Booked" in the "#bookinghistorytable_system_0_r4 .columnclass.status" "css_element"
-    And I should see "Limited WL, full" in the "#bookinghistorytable_system_0_r5 .columnclass.text" "css_element"
-    And I should see "student1@example.com" in the "#bookinghistorytable_system_0_r5 .columnclass.email" "css_element"
-    And I should see "0 - Booked" in the "#bookinghistorytable_system_0_r5 .columnclass.status" "css_element"
-    And I should see "Limited WL, full" in the "#bookinghistorytable_system_0_r6 .columnclass.text" "css_element"
-    And I should see "student2@example.com" in the "#bookinghistorytable_system_0_r6 .columnclass.email" "css_element"
-    And I should see "0 - Booked" in the "#bookinghistorytable_system_0_r6 .columnclass.status" "css_element"
-    And I should see "Limited WL, full" in the "#bookinghistorytable_system_0_r7 .columnclass.text" "css_element"
-    And I should see "student3@example.com" in the "#bookinghistorytable_system_0_r7 .columnclass.email" "css_element"
-    And I should see "1 - Waiting list" in the "#bookinghistorytable_system_0_r7 .columnclass.status" "css_element"
-    And I should see "Limited WL, not full" in the "#bookinghistorytable_system_0_r8 .columnclass.text" "css_element"
-    And I should see "student1@example.com" in the "#bookinghistorytable_system_0_r8 .columnclass.email" "css_element"
-    And I should see "0 - Booked" in the "#bookinghistorytable_system_0_r8 .columnclass.status" "css_element"
+    And "//tr[starts-with(@id, 'bookinghistorytable_system_0_r')][.//td[contains(concat(' ', normalize-space(@class), ' '), ' text ') and contains(., 'Unlimited WL, full')] and .//td[contains(concat(' ', normalize-space(@class), ' '), ' email ') and contains(., 'student1@example.com')] and .//td[contains(concat(' ', normalize-space(@class), ' '), ' status ') and contains(., '0 - Booked')]]" "xpath_element" should exist
+    And "//tr[starts-with(@id, 'bookinghistorytable_system_0_r')][.//td[contains(concat(' ', normalize-space(@class), ' '), ' text ') and contains(., 'Unlimited WL, full')] and .//td[contains(concat(' ', normalize-space(@class), ' '), ' email ') and contains(., 'student2@example.com')] and .//td[contains(concat(' ', normalize-space(@class), ' '), ' status ') and contains(., '0 - Booked')]]" "xpath_element" should exist
+    And "//tr[starts-with(@id, 'bookinghistorytable_system_0_r')][.//td[contains(concat(' ', normalize-space(@class), ' '), ' text ') and contains(., 'Unlimited WL, full')] and .//td[contains(concat(' ', normalize-space(@class), ' '), ' email ') and contains(., 'student3@example.com')] and .//td[contains(concat(' ', normalize-space(@class), ' '), ' status ') and contains(., '1 - Waiting list')]]" "xpath_element" should exist
+    And "//tr[starts-with(@id, 'bookinghistorytable_system_0_r')][.//td[contains(concat(' ', normalize-space(@class), ' '), ' text ') and contains(., 'Unlimited WL, not full')] and .//td[contains(concat(' ', normalize-space(@class), ' '), ' email ') and contains(., 'student1@example.com')] and .//td[contains(concat(' ', normalize-space(@class), ' '), ' status ') and contains(., '0 - Booked')]]" "xpath_element" should exist
+    And "//tr[starts-with(@id, 'bookinghistorytable_system_0_r')][.//td[contains(concat(' ', normalize-space(@class), ' '), ' text ') and contains(., 'Limited WL, full')] and .//td[contains(concat(' ', normalize-space(@class), ' '), ' email ') and contains(., 'student1@example.com')] and .//td[contains(concat(' ', normalize-space(@class), ' '), ' status ') and contains(., '0 - Booked')]]" "xpath_element" should exist
+    And "//tr[starts-with(@id, 'bookinghistorytable_system_0_r')][.//td[contains(concat(' ', normalize-space(@class), ' '), ' text ') and contains(., 'Limited WL, full')] and .//td[contains(concat(' ', normalize-space(@class), ' '), ' email ') and contains(., 'student2@example.com')] and .//td[contains(concat(' ', normalize-space(@class), ' '), ' status ') and contains(., '0 - Booked')]]" "xpath_element" should exist
+    And "//tr[starts-with(@id, 'bookinghistorytable_system_0_r')][.//td[contains(concat(' ', normalize-space(@class), ' '), ' text ') and contains(., 'Limited WL, full')] and .//td[contains(concat(' ', normalize-space(@class), ' '), ' email ') and contains(., 'student3@example.com')] and .//td[contains(concat(' ', normalize-space(@class), ' '), ' status ') and contains(., '1 - Waiting list')]]" "xpath_element" should exist
+    And "//tr[starts-with(@id, 'bookinghistorytable_system_0_r')][.//td[contains(concat(' ', normalize-space(@class), ' '), ' text ') and contains(., 'Limited WL, not full')] and .//td[contains(concat(' ', normalize-space(@class), ' '), ' email ') and contains(., 'student1@example.com')] and .//td[contains(concat(' ', normalize-space(@class), ' '), ' status ') and contains(., '0 - Booked')]]" "xpath_element" should exist
     # Validate accessibility of report2_tracker page
     And the page should meet accessibility standards

@@ -67,10 +67,8 @@ Feature: Use the bookings tracker (report2.php) as replacement of the old report
   Scenario: Booking report2: switch the system scope between aggregated options and single answers
     Given I log in as "admin"
     And I visit "/mod/booking/report2.php"
-    And I should see "B2-Option1" in the "#booked_system_0_r1" "css_element"
-    And I should see "B1-Option1" in the "#booked_system_0_r2" "css_element"
-    And I should see "2/10" in the "#booked_system_0_r1" "css_element"
-    And I should see "2/5" in the "#booked_system_0_r2" "css_element"
+    And "//tr[starts-with(@id, 'booked_system_0_r')][contains(., 'B2-Option1') and contains(., '2/10')]" "xpath_element" should exist
+    And "//tr[starts-with(@id, 'booked_system_0_r')][contains(., 'B1-Option1') and contains(., '2/5')]" "xpath_element" should exist
     ## Switch to the non-aggregated answers view.
     When I click on "View all bookings separately" "link"
     And I wait until the page is ready
@@ -81,14 +79,14 @@ Feature: Use the bookings tracker (report2.php) as replacement of the old report
     ## And back to the aggregated options view.
     When I click on "Aggregate bookings for each booking option" "link"
     And I wait until the page is ready
-    And I should see "2/10" in the "#booked_system_0_r1" "css_element"
-    Then I should see "2/5" in the "#booked_system_0_r2" "css_element"
+    And "//tr[starts-with(@id, 'booked_system_0_r')][contains(., 'B2-Option1') and contains(., '2/10')]" "xpath_element" should exist
+    Then "//tr[starts-with(@id, 'booked_system_0_r')][contains(., 'B1-Option1') and contains(., '2/5')]" "xpath_element" should exist
 
   @javascript
   Scenario: Booking report2: switch from system scope to option scope and view preconfigured additional fields
     Given I log in as "admin"
     And I visit "/mod/booking/report2.php"
-    And I should see "B2-Option1" in the "#booked_system_0_r1" "css_element"
+    And I should see "B2-Option1" in the ".wunderbyteTableClass.booked_system_0" "css_element"
     And I follow "B2-Option1"
     And I switch to a second window
     And I should see "Manage bookings for Booking option: \"B2-Option1\""
@@ -108,7 +106,7 @@ Feature: Use the bookings tracker (report2.php) as replacement of the old report
   Scenario: Booking report2: manage completion status in the option scope
     Given I log in as "admin"
     And I visit "/mod/booking/report2.php"
-    And I should see "B2-Option1" in the "#booked_system_0_r1" "css_element"
+    And I should see "B2-Option1" in the ".wunderbyteTableClass.booked_system_0" "css_element"
     And I follow "B2-Option1"
     And I switch to a second window
     And I should see "Manage bookings for Booking option: \"B2-Option1\""
@@ -140,7 +138,7 @@ Feature: Use the bookings tracker (report2.php) as replacement of the old report
   Scenario: Booking report2: manage presence status in the option scope
     Given I log in as "admin"
     And I visit "/mod/booking/report2.php"
-    And I should see "B2-Option1" in the "#booked_system_0_r1" "css_element"
+    And I should see "B2-Option1" in the ".wunderbyteTableClass.booked_system_0" "css_element"
     And I follow "B2-Option1"
     And I switch to a second window
     And I should see "Manage bookings for Booking option: \"B2-Option1\""

@@ -119,12 +119,39 @@ final class columns_helper_test extends advanced_testcase {
 
         // The aggregated scopes use their dedicated table so timestamp ties
         // receive the same secondary ordering on every supported database.
+        $neweroption = $plugingenerator->create_option((object)[
+            'bookingid' => $booking->id,
+            'text' => 'Newer option id',
+            'courseid' => $course->id,
+            'maxanswers' => 5,
+            'optiondateid_1' => '0',
+            'daystonotify_1' => '0',
+            'coursestarttime_1' => strtotime('now + 1 day'),
+            'courseendtime_1' => strtotime('now + 2 day'),
+        ]);
+        singleton_service::destroy_instance();
+        $newersettings = singleton_service::get_instance_of_booking_option_settings($neweroption->id);
+        $newerboption = singleton_service::get_instance_of_booking_option(
+            $newersettings->cmid,
+            $newersettings->id
+        );
+        $newerboption->user_submit_response($student, 0, 0, 0, MOD_BOOKING_VERIFIED);
+        $DB->set_field_select(
+            'booking_answers',
+            'timecreated',
+            1234567890,
+            'optionid = :firstoptionid OR optionid = :neweroptionid',
+            ['firstoptionid' => $option->id, 'neweroptionid' => $neweroption->id]
+        );
         $systemtable = $bookedusers->return_raw_table('system', 0, MOD_BOOKING_STATUSPARAM_BOOKED);
         $this->assertInstanceOf(aggregated_options_table::class, $systemtable);
         $this->assertMatchesRegularExpression(
-            '/^timecreated\s+DESC(?:\s+NULLS\s+LAST)?, titleprefix ASC, text ASC, id ASC$/i',
+            '/^timecreated\s+DESC(?:\s+NULLS\s+LAST)?, id DESC$/i',
             $systemtable->get_sql_sort()
         );
+        $systemrows = array_values($systemtable->rawdata);
+        $this->assertSame($neweroption->id, $systemrows[0]->optionid);
+        $this->assertSame($option->id, $systemrows[1]->optionid);
 
         // 3a. The "Toggle completion status" button is added when completed is configured.
         $completionbuttons = array_filter(

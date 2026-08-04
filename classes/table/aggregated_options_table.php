@@ -25,7 +25,8 @@ class aggregated_options_table extends manageusers_table {
      *
      * The table API exposes one default column. The aggregated query can return
      * several options with the same second-resolution timecreated value, so its
-     * generated ORDER BY needs explicit ascending tie-breakers.
+     * generated ORDER BY needs the option id as a unique tie-breaker. Descending
+     * id order is consistent with the newest-first primary order.
      *
      * @return string
      */
@@ -33,7 +34,7 @@ class aggregated_options_table extends manageusers_table {
         $sort = parent::get_sql_sort();
         // PostgreSQL adds explicit NULL placement to Moodle's generated sort.
         if (preg_match('/^timecreated\s+DESC(?:\s+NULLS\s+LAST)?$/i', trim($sort))) {
-            $sort .= ', titleprefix ASC, text ASC, id ASC';
+            $sort .= ', id DESC';
         }
         return $sort;
     }

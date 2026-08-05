@@ -145,7 +145,7 @@ final class columns_helper_test extends advanced_testcase {
         $systemtable = $bookedusers->return_raw_table('system', 0, MOD_BOOKING_STATUSPARAM_BOOKED);
         $this->assertInstanceOf(aggregated_options_table::class, $systemtable);
         $this->assertMatchesRegularExpression(
-            '/^timecreated\s+DESC(?:\s+NULLS\s+LAST)?, titleprefix ASC, text ASC, id ASC$/i',
+            '/^timecreated\s+DESC(?:\s+NULLS\s+LAST)?, id DESC$/i',
             $systemtable->get_sql_sort()
         );
 

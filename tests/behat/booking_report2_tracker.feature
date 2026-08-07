@@ -188,6 +188,7 @@ Feature: Use the bookings tracker (report2.php) as replacement of the old report
     And I should see "No records found." in the "accordion-item-sentmessages" "region"
     # Select both booking records. Both records must be selected because the modal
     # is expected to contain Student 3 and Student 4 as recipients.
+    And I click on "Bookings" "text" in the "#accordion-usertables" "css_element"
     And I click on "//table[starts-with(@id, 'booked_option_')]//thead//input[@type='checkbox' and contains(concat(' ', normalize-space(@class), ' '), ' tableheadercheckbox ')]" "xpath_element"
     # 3. Open the custom-email modal.
     And I click on "//a[@data-formname='mod_booking\form\modal_send_custom_message' and normalize-space(.)='Send custom email']" "xpath_element"

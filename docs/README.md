@@ -25,6 +25,7 @@ This `docs/` directory is the central reference for administrators, teachers, an
 | Offer individually bookable time slots (appointments, exams) | [Slot booking](user/slotbooking/README.md) |
 | Trigger actions automatically when someone books - NOT used for notification or messages | [Actions after booking](user/actions_after_booking/README.md) |
 | Understand scheduled background tasks | [Scheduled tasks](user/scheduled_tasks/README.md) |
+| Diagnose browser-console errors on pages with embedded services | [Browser console troubleshooting](admin/browser-console-troubleshooting.md) |
 | Automatically remove bookings when a user loses access | [Check answers](developer-guides/CHECKANSWERS_API.md) |
 | Allow external links to bypass profile-field restrictions | [Override user field](user/override_user_field/README.md) |
 | Build or install a booking extension (subplugin) | [Booking extensions](user/booking_extensions/README.md) |
@@ -90,6 +91,7 @@ Common next steps:
 
 | Directory | Description |
 |-----------|-------------|
+| [`browser-console-troubleshooting.md`](admin/browser-console-troubleshooting.md) | Triage JavaScript, iframe, analytics, and third-party service errors without assuming they originate in mod_booking |
 | [`capabilities/`](user/capabilities/README.md) | All 57+ Moodle capabilities with default role assignments and notes on sensitive permissions |
 | [`scheduled_tasks/`](user/scheduled_tasks/README.md) | The 5 scheduled background tasks: purpose, default cron schedule, and tuning guidance |
 | [`override_user_field/`](user/override_user_field/README.md) | How to allow external users to bypass profile-field booking restrictions using a special URL |
